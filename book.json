@@ -58,12 +58,12 @@
       }
     },
     "tbfed-pagefooter": {
-      "copyright":"Copyright &copy jsliang.top 2019",
+      "copyright":"Copyright &copy jiaojiao52002.cn 2019",
       "modify_label": "该文件修订时间：",
       "modify_format": "YYYY-MM-DD HH:mm:ss"
     },
     "baidu-tongji": {
-      "token": "55e7dfe47f4dc1c018d4042fdfa62565"
+      "token": "89a6cd4dac6db5e9826cf2e218d990c1"
     },
     "anchor-navigation-ex": {
       "showLevel": false
