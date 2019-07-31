@@ -1,0 +1,631 @@
+
+<!DOCTYPE HTML>
+<html lang="zh-hans" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>Head-First-设计模式1-----策略模式 · jixiang52002 的文档库</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        <meta name="author" content="吉祥 - jixiang52002">
+        
+        
+    
+    <link rel="stylesheet" href="gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-prism/prism-solarizedlight.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-search-pro/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-expandable-chapters/expandable-chapters.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-splitter/splitter.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-donate/plugin.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-tbfed-pagefooter/footer.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-anchor-navigation-ex/style/plugin.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-theme-comscore/test.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+
+        
+    
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="Head-First-设计模式2---观察者（Observer）模式.html" />
+    
+    
+    <link rel="prev" href="./" />
+    
+
+    <style>
+    @media only screen and (max-width: 640px) {
+        .book-header .hidden-mobile {
+            display: none;
+        }
+    }
+    </style>
+    <script>
+        window["gitbook-plugin-github-buttons"] = {"buttons":[{"user":"jixiang52002","repo":"document-library","type":"star","count":true,"size":"small"},{"user":"jixiang52002","width":"160","type":"follow","count":true,"size":"small"}]};
+    </script>
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="输入并搜索" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        <li class="header">简介</li>
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">设计模式</li>
+        
+        
+    
+        <li class="chapter active" data-level="2.1" data-path="Head-First-设计模式1-----策略模式.html">
+            
+                <a href="Head-First-设计模式1-----策略模式.html">
+            
+                    
+                    Head-First-设计模式1-----策略模式
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2" data-path="Head-First-设计模式2---观察者（Observer）模式.html">
+            
+                <a href="Head-First-设计模式2---观察者（Observer）模式.html">
+            
+                    
+                    Head-First-设计模式2---观察者（Observer）模式
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3" data-path="Head-First-设计模式3----装饰者模式.html">
+            
+                <a href="Head-First-设计模式3----装饰者模式.html">
+            
+                    
+                    Head-First-设计模式3----装饰者模式
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            本书使用 GitBook 发布
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="." >Head-First-设计模式1-----策略模式</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <div id="anchor-navigation-ex-navbar"><i class="fa fa-navicon"></i><ul><li><span class="title-icon "></span><a href="#1&#x5F15;&#x6587;"><b></b>1.&#x5F15;&#x6587;</a></li><li><span class="title-icon "></span><a href="#2&#x7B56;&#x7565;&#x6A21;&#x5F0F;"><b></b>2.&#x7B56;&#x7565;&#x6A21;&#x5F0F;</a></li><ul><li><span class="title-icon "></span><a href="#21&#x5206;&#x5F00;&#x53D8;&#x5316;&#x7684;&#x548C;&#x4E0D;&#x4F1A;&#x53D8;&#x5316;&#x7684;"><b></b>2.1&#x5206;&#x5F00;&#x53D8;&#x5316;&#x7684;&#x548C;&#x4E0D;&#x4F1A;&#x53D8;&#x5316;&#x7684;</a></li><li><span class="title-icon "></span><a href="#22&#x5B9E;&#x73B0;&#x9E2D;&#x5B50;&#x7684;&#x884C;&#x4E3A;&#xFF08;&#x4EE3;&#x7801;&#xFF09;"><b></b>2.2&#x5B9E;&#x73B0;&#x9E2D;&#x5B50;&#x7684;&#x884C;&#x4E3A;&#xFF08;&#x4EE3;&#x7801;&#xFF09;</a></li><li><span class="title-icon "></span><a href="#23&#x7EC4;&#x5408;&#x9E2D;&#x5B50;&#x884C;&#x4E3A;"><b></b>2.3&#x7EC4;&#x5408;&#x9E2D;&#x5B50;&#x884C;&#x4E3A;</a></li></ul><li><span class="title-icon "></span><a href="#3&#x7B56;&#x7565;&#x6A21;&#x5F0F;&#x8BB2;&#x89E3;"><b></b>3.&#x7B56;&#x7565;&#x6A21;&#x5F0F;&#x8BB2;&#x89E3;</a></li></ul></div><a href="#1&#x5F15;&#x6587;" id="anchorNavigationExGoTop"><i class="fa fa-arrow-up"></i></a><p>&#x672C;&#x6587;&#x53C2;&#x7167;&#x300A;Head First &#x8BBE;&#x8BA1;&#x6A21;&#x5F0F;&#x300B;&#xFF0C;&#x8F6C;&#x8F7D;&#x8BF7;&#x6CE8;&#x660E;&#x51FA;&#x5904;
+&#x5BF9;&#x4E8E;&#x6574;&#x4E2A;&#x7CFB;&#x5217;&#xFF0C;&#x6211;&#x4EEC;&#x6309;&#x7167;&#x8FD9;&#x672C;&#x4E66;&#x7684;&#x8BBE;&#x8BA1;&#x903B;&#x8F91;&#xFF0C;&#x4F7F;&#x7528;&#x60C5;&#x666F;&#x5206;&#x6790;&#x7684;&#x65B9;&#x5F0F;&#x6765;&#x63CF;&#x8FF0;&#xFF0C;&#x5E76;&#x4E14;&#x7A7F;&#x63D2;&#x4F7F;&#x7528;&#x4E00;&#x4E9B;&#x95EE;&#x9898;&#xFF0C;&#x603B;&#x7ED3;&#x7684;&#x65B9;&#x5F0F;&#x6765;&#x8BB2;&#x8FF0;&#x3002;&#x5E76;&#x4E14;&#x6240;&#x6709;&#x7684;&#x5F00;&#x53D1;&#x6E90;&#x7801;&#xFF0C;&#x90FD;&#x4F1A;&#x6258;&#x7BA1;&#x5230;github&#x4E0A;&#x3002;
+&#x9879;&#x76EE;&#x5730;&#x5740;&#xFF1A;<a href="https://github.com/jixiang52002/HFDesignPattern" target="_blank">https://github.com/jixiang52002/HFDesignPattern</a></p>
+<h1 id="1&#x5F15;&#x6587;"><a name="1&#x5F15;&#x6587;" class="anchor-navigation-ex-anchor" href="#1&#x5F15;&#x6587;"><i class="fa fa-link" aria-hidden="true"></i></a>1.&#x5F15;&#x6587;</h1>
+<p>Joe&#x7684;&#x516C;&#x53F8;&#x662F;&#x505A;&#x6A21;&#x62DF;&#x9E2D;&#x5B50;&#x6D3B;&#x52A8;&#x7684;&#x6E38;&#x620F;&#x800C;&#x51FA;&#x540D;&#xFF0C;&#x8FD9;&#x6B3E;&#x6E38;&#x620F;&#x53D6;&#x540D;&#x4E3A;SimUDuck&#xFF0C;&#x8FD9;&#x6B3E;&#x6E38;&#x620F;&#x5177;&#x6709;&#x975E;&#x5E38;&#x591A;&#x7684;&#x9E2D;&#x5B50;&#xFF0C;&#x4E00;&#x8FB9;&#x6E38;&#x6CF3;&#x4E00;&#x8FB9;&#x5471;&#x5471;&#x53EB;&#x3002;&#x8FD9;&#x91CC;&#x7684;&#x8BBE;&#x8BA1;&#x91C7;&#x7528;&#x4E86;&#x6807;&#x51C6;&#x7684;OO&#xFF08;Object Oriented&#xFF0C;&#x9762;&#x5411;&#x5BF9;&#x8C61;&#xFF09;&#x7684;&#x65B9;&#x5F0F;&#x7F16;&#x5199;&#xFF0C;&#x8FD9;&#x91CC;&#x6709;&#x4E00;&#x4E2A;&#x9E2D;&#x5B50;&#x7684;&#x8D85;&#x7C7B;&#xFF08;SuperClass&#xFF09;&#xFF0C;&#x540E;&#x7EED;&#x6240;&#x6709;&#x7684;&#x9E2D;&#x5B50;&#x90FD;&#x5FC5;&#x987B;&#x7EE7;&#x627F;&#x8FD9;&#x4E2A;&#x8D85;&#x7C7B;&#x3002;</p>
+<ul>
+<li>OO&#x9762;&#x5411;&#x5BF9;&#x8C61;&#x6A21;&#x578B;</li>
+</ul>
+<p><img src="https://upload-images.jianshu.io/upload_images/2326194-9b9a85a89f8a85e2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="&#x9E2D;&#x5B50;OO&#x6A21;&#x578B;"></p>
+<ul>
+<li>&#x7EE7;&#x627F;</li>
+</ul>
+<p>&#x8FD9;&#x65F6;&#xFF0C;&#x516C;&#x53F8;&#x7684;&#x9AD8;&#x5C42;&#x4EEC;&#x60F3;&#x8981;&#x901A;&#x8FC7;&#x6A21;&#x62DF;&#x4F1A;&#x98DE;&#x7684;&#x9E2D;&#x5B50;&#x6765;&#x8FFD;&#x6C42;&#x884C;&#x4E1A;&#x7684;&#x9886;&#x5148;&#x3002;&#x7136;&#x540E;Joe&#x7684;&#x9879;&#x76EE;&#x7ECF;&#x7406;&#x62CD;&#x7740;&#x80F8;&#x812F;&#x544A;&#x8BC9;&#x4E3B;&#x7BA1;&#xFF0C;Joe&#x5F88;&#x5FEB;&#x5C31;&#x53EF;&#x4EE5;&#x641E;&#x5B9A;&#xFF0C;&#x201C;&#x6709;&#x4E86;OO&#x4EC0;&#x4E48;&#x90FD;&#x4E0D;&#x6015;&#x201D;
+Joe&#x63A5;&#x6536;&#x5230;&#x4EFB;&#x52A1;&#x540E;&#xFF0C;&#x60F3;&#x51FA;&#x4E86;&#x4E00;&#x4E2A;&#x529E;&#x6CD5;&#xFF1A;&#x201C;&#x6211;&#x4EC5;&#x9700;&#x8981;&#x5728;Duck&#x8FD9;&#x4E2A;&#x8D85;&#x7C7B;&#x4E2D;&#x52A0;&#x4E0A;Fly()&#x7684;&#x65B9;&#x6CD5;&#xFF0C;&#x7136;&#x540E;&#x6240;&#x6709;&#x7684;&#x9E2D;&#x5B50;&#x90FD;&#x53EF;&#x4EE5;&#x98DE;&#x4E86;&#x201D;&#x3002;&#x7136;&#x540E;&#x4ED6;&#x7684;&#x8BBE;&#x8BA1;&#x6A21;&#x578B;&#x5C31;&#x6539;&#x6210;&#x4EE5;&#x4E0B;&#x7684;&#x6837;&#x5B50;</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/2326194-edb552aa20035aea.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="&#x589E;&#x52A0;fly&#x65B9;&#x6CD5;&#x540E;&#x7684;&#x6A21;&#x578B;">
+&#x8FD9;&#x6837;&#x770B;&#x8D77;&#x6765;&#x8C8C;&#x4F3C;&#x6CA1;&#x6709;&#x4EC0;&#x4E48;&#x95EE;&#x9898;&#x7684;&#xFF0C;&#x7136;&#x540E;&#x53EF;&#x6015;&#x7684;&#x95EE;&#x9898;&#x53D1;&#x751F;&#x4E86;&#x3002;&#x3002;&#x3002;&#x3002;
+&#x7528;&#x6237;&#x53CD;&#x9988;&#xFF0C;&#x81EA;&#x5DF1;&#x7684;&#x6A61;&#x76AE;&#x9E2D;&#x548C;&#x6728;&#x9E2D;&#x5C45;&#x7136;&#x4E5F;&#x53EF;&#x4EE5;&#x98DE;&#x8D77;&#x6765;&#xFF01;&#xFF01;&#xFF01;
+&#x90A3;&#x4E48;&#xFF0C;&#x5230;&#x5E95;&#x662F;&#x4E3A;&#x4F55;&#x5BFC;&#x81F4;&#x4E86;&#x8FD9;&#x4E2A;&#x53EF;&#x6015;&#x7684;&#x95EE;&#x9898;&#xFF1F;
+&#x6211;&#x4EEC;&#x6765;&#x5206;&#x6790;&#x4E00;&#x4E0B;&#xFF1A;&#x7531;&#x4E8E;Joe&#x5728;Duck&#x8D85;&#x7C7B;&#x4E2D;&#x52A0;&#x4E0A;fly&#x65B9;&#x6CD5;&#xFF0C;&#x5BFC;&#x81F4;&#x6240;&#x6709;&#x7684;&#x5B50;&#x7C7B;&#x90FD;&#x4F1A;&#x7EE7;&#x627F;&#x8BE5;&#x65B9;&#x6CD5;&#xFF0C;&#x8FD9;&#x5C31;&#x5BFC;&#x81F4;&#x4E86;&#x539F;&#x672C;&#x4E0D;&#x4F1A;&#x98DE;&#x7684;&#x6A61;&#x76AE;&#x9E2D;&#x548C;&#x6728;&#x9E2D;&#x4E5F;&#x5177;&#x6709;&#x98DE;&#x884C;&#x80FD;&#x529B;&#xFF0C;&#x663E;&#x7136;&#x4E3A;&#x4E86;&#x63D0;&#x9AD8;&#x590D;&#x7528;&#x6027;&#x4F7F;&#x7528;&#x7684;&#x7EE7;&#x627F;&#x65B9;&#x5F0F;&#xFF0C;&#x5E76;&#x672A;&#x8FBE;&#x5230;&#x5B8C;&#x7F8E;&#x5F97;&#x7ED3;&#x679C;&#x3002;</p>
+<ul>
+<li>&#x7EE7;&#x627F;+&#x8986;&#x76D6;</li>
+</ul>
+<p>Joe&#x5728;&#x601D;&#x8003;&#x540E;&#xFF0C;&#x53C8;&#x5F97;&#x51FA;&#x4E00;&#x4E2A;&#x65B9;&#x6848;&#xFF0C;&#x90A3;&#x5C31;&#x662F;&#x5728;&#x6A61;&#x76AE;&#x9E2D;&#x4E2D;&#x5C06;fly&#x65B9;&#x6CD5;&#x8986;&#x76D6;&#x6389;&#xFF0C;&#x4E0D;&#x505A;&#x4EFB;&#x4F55;&#x64CD;&#x4F5C;&#xFF0C;&#x8FD9;&#x6837;&#x539F;&#x6709;&#x7684;RubberDuck&#x7C7B;&#x4E2D;&#x67B6;&#x6784;&#x5C31;&#x53D8;&#x6210;&#x5982;&#x4E0B;&#xFF1A;</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/2326194-1aa286c1c706de54.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="RubberDuck">
+&#x7136;&#x540E;&#xFF0C;&#x4E1A;&#x52A1;&#x7684;&#x9700;&#x6C42;&#x53C8;&#x9700;&#x8981;&#x52A0;&#x5165;&#x6728;&#x9E2D;&#xFF08;DecoyDuck&#xFF09;&#xFF0C;&#x5B83;&#x4E0D;&#x4F1A;&#x53EB;&#x4E5F;&#x4E0D;&#x4F1A;&#x98DE;&#x3002;&#x82E6;&#x903C;&#x7684;Joe&#x53C8;&#x8981;&#x628A;&#x6728;&#x9E2D;&#xFF08;DecoyDuck)&#x4E2D;quark&#x65B9;&#x6CD5;&#x8986;&#x76D6;&#xFF0C;&#x8FD9;&#x6837;DecoyDuck&#x4E2D;&#x7684;&#x7C7B;&#x7ED3;&#x6784;&#x5C31;&#x53D8;&#x6210;&#x5982;&#x4E0B;&#xFF1A;</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/2326194-7646c38ce3b2a8e9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="DecoyDuck"></p>
+<p>&#x4F46;&#x662F;&#x6211;&#x4EEC;&#x4F1A;&#x53D1;&#x89C9;&#xFF0C;&#x5982;&#x679C;&#x4EE5;&#x540E;&#x6709;&#x65B0;&#x7684;&#x4E1A;&#x52A1;&#xFF0C;&#x751A;&#x81F3;&#x4E8E;fly&#x65B9;&#x6CD5;&#x4E2D;&#x51FA;&#x73B0;&#x4E00;&#x4E2A;bug&#xFF0C;&#x6216;&#x8005;&#x9700;&#x8981;&#x5220;&#x9664;fly&#x76F8;&#x5173;&#x7684;&#x4E1A;&#x52A1;&#xFF0C;&#x6240;&#x6709;&#x76F8;&#x5173;&#x4EE3;&#x7801;&#x90FD;&#x9700;&#x8981;&#x4FEE;&#x6539;&#xFF0C;&#x5728;&#x5927;&#x578B;&#x9879;&#x76EE;&#x4E2D;&#xFF0C;&#x8FD9;&#x90FD;&#x5BFC;&#x81F4;&#x975E;&#x5E38;&#x53EF;&#x6015;&#x7684;&#x7EF4;&#x62A4;&#x95EE;&#x9898;&#x3002;&#x90A3;&#x4E48;&#xFF0C;&#x5230;&#x5E95;&#x8BE5;&#x600E;&#x4E48;&#x529E;</p>
+<ul>
+<li>&#x63A5;&#x53E3;</li>
+</ul>
+<p>&#x201C;&#x8FD9;&#x4E0D;&#x5C31;&#x76F8;&#x5F53;&#x4E8E;&#x8BA9;&#x6211;&#x6839;&#x636E;&#x7528;&#x6237;&#x624B;&#x673A;&#x58F3;&#x989C;&#x8272;&#x6362;&#x4E3B;&#x9898;&#x5417;&#xFF1F;&#x201D;&#xFF0C;&#x53EF;&#x601C;&#x7684;Joe&#x5728;&#x5FEB;&#x88AB;&#x60F3;&#x8981;&#x51B2;&#x4E0A;&#x53BB;&#x6253;&#x4EA7;&#x54C1;&#x7ECF;&#x7406;&#x7684;&#x65F6;&#x5019;&#xFF08;&#x76AE;&#x4E00;&#x4E0B;&#x3002;&#x3002;&#x3002;&#xFF09;&#x3002;&#x8111;&#x5B50;&#x7A81;&#x7136;&#x60F3;&#x8D77;&#x4E00;&#x4EF6;&#x795E;&#x5668;&#xFF0C;&#x4ED6;&#x51B3;&#x5B9A;&#x8BD5;&#x8BD5;&#x3002;&#x4ED6;&#x7684;&#x65B9;&#x6CD5;&#x5C31;&#x662F;&#x4F7F;&#x7528;&#x63A5;&#x53E3;&#xFF08;Interface&#xFF09;&#xFF0C;&#x5C06;fly&#x5206;&#x79BB;&#x51FA;&#x6765;&#xFF0C;&#x653E;&#x8FDB;&#x4E00;&#x4E2A;Flyable&#x63A5;&#x53E3;&#x4E2D;&#x3002;&#x9488;&#x5BF9;&#x4E8E;quark&#x65B9;&#x6CD5;&#xFF0C;&#x4E5F;&#x53EF;&#x4EE5;&#x8FD9;&#x6837;&#x5206;&#x79BB;&#x8FDB;Quarkable&#x63A5;&#x53E3;&#x4E2D;&#xFF0C;</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/2326194-ed9998418998aa90.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="&#x63A5;&#x53E3;"></p>
+<p>&#x867D;&#x7136;&#x8FD9;&#x6837;&#x770B;&#x8D77;&#x6765;&#x6EE1;&#x8DB3;&#x4E86;&#x6211;&#x4EEC;&#x4E4B;&#x524D;&#x6240;&#x63D0;&#x5230;&#x7684;&#x6240;&#x6709;&#x9700;&#x6C42;&#xFF0C;&#x4F46;&#x662F;&#x8FD9;&#x6837;&#x4E00;&#x6765;&#x91CD;&#x590D;&#x4EE3;&#x7801;&#x91CF;&#x4F1A;&#x975E;&#x5E38;&#x53EF;&#x6015;&#xFF0C;&#x5982;&#x679C;&#x6709;&#x4E0A;&#x4E07;&#x4E2A;Duck&#x5B50;&#x7C7B;&#xFF0C;Joe&#x4E00;&#x5B9A;&#x4F1A;&#x53D1;&#x75AF;&#x7684;&#x3002;&#x6240;&#x6709;&#xFF0C;&#x8FD9;&#x4E2A;&#x65B9;&#x6CD5;&#x867D;&#x7136;&#x770B;&#x8D77;&#x6765;&#x5F88;&#x597D;&#xFF0C;&#x4F46;&#x662F;&#x4E00;&#x65E6;&#x67D0;&#x4E2A;&#x65B9;&#x6CD5;&#x6216;&#x8005;&#x884C;&#x4E3A;&#x53D1;&#x751F;&#x6539;&#x53D8;&#xFF0C;&#x6211;&#x4EEC;&#x9700;&#x8981;&#x5B9A;&#x4F4D;&#x5230;&#x6240;&#x6709;&#x5B9E;&#x73B0;&#x8BE5;&#x65B9;&#x6CD5;&#x7684;&#x7C7B;&#x4E2D;&#x53BB;&#x4FEE;&#x6539;&#x5BF9;&#x5E94;&#x7684;&#x4EE3;&#x7801;&#xFF0C;&#x8FD9;&#x5F88;&#x5BB9;&#x6613;&#x5BFC;&#x81F4;bug&#x7684;&#x53D1;&#x751F;&#x3002;</p>
+<p>&#x90A3;&#x4E48;&#xFF0C;&#x5230;&#x5E95;&#x6709;&#x6CA1;&#x6709;&#x4E00;&#x79CD;&#x80FD;&#x591F;&#x5EFA;&#x7ACB;&#x8F6F;&#x4EF6;&#x7684;&#x6709;&#x6548;&#x65B9;&#x6CD5;&#xFF0C;&#x80FD;&#x591F;&#x8BA9;&#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x5BF9;&#x65E2;&#x6709;&#x7684;&#x9879;&#x76EE;&#x5728;&#x5F71;&#x54CD;&#x6700;&#x5C0F;&#x7684;&#x60C5;&#x51B5;&#x4E0B;&#x4FEE;&#x6539;&#x4ED6;&#x7684;&#x4E1A;&#x52A1;&#x903B;&#x8F91;&#xFF0C;&#x8FD9;&#x6837;&#x6211;&#x4EEC;&#x80FD;&#x591F;&#x82B1;&#x5F88;&#x5C11;&#x7684;&#x65F6;&#x95F4;&#x53BB;&#x4FEE;&#x6539;&#x4EE3;&#x7801;&#x3002;</p>
+<h1 id="2&#x7B56;&#x7565;&#x6A21;&#x5F0F;"><a name="2&#x7B56;&#x7565;&#x6A21;&#x5F0F;" class="anchor-navigation-ex-anchor" href="#2&#x7B56;&#x7565;&#x6A21;&#x5F0F;"><i class="fa fa-link" aria-hidden="true"></i></a>2.&#x7B56;&#x7565;&#x6A21;&#x5F0F;</h1>
+<blockquote>
+<p>&#x7B2C;&#x4E00;&#x8BBE;&#x8BA1;&#x539F;&#x5219;
+  &#x627E;&#x51FA;&#x5E94;&#x7528;&#x4E2D;&#x53EF;&#x80FD;&#x9700;&#x8981;&#x53D8;&#x5316;&#x4E4B;&#x5904;&#xFF0C;&#x628A;&#x5B83;&#x4EEC;&#x72EC;&#x7ACB;&#x51FA;&#x6765;&#xFF0C;&#x4E0D;&#x8981;&#x548C;&#x90A3;&#x4E9B;&#x4E0D;&#x9700;&#x8981;&#x53D8;&#x5316;&#x7684;&#x4EE3;&#x7801;&#x6DF7;&#x5408;&#x5728;&#x4E00;&#x8D77;&#x3002;</p>
+</blockquote>
+<p>&#x6309;&#x7167;&#x4EE5;&#x4E0A;&#x7684;&#x539F;&#x5219;&#x8FDB;&#x884C;&#x8BBE;&#x8BA1;&#xFF0C;&#x4EE3;&#x7801;&#x53D1;&#x751F;&#x53D8;&#x5316;&#x5F15;&#x8D77;&#x7684;&#x540E;&#x679C;&#x4F1A;&#x975E;&#x5E38;&#x5C0F;&#xFF0C;&#x6574;&#x4E2A;&#x9879;&#x76EE;&#x4F1A;&#x7279;&#x522B;&#x5177;&#x6709;&#x5F39;&#x6027;&#x3002;
+&#x8FD9;&#x4E2A;&#x539F;&#x5219;&#x4E0D;&#x4EC5;&#x4EC5;&#x9002;&#x7528;&#x4E8E;&#x7B56;&#x7565;&#x6A21;&#x5F0F;&#xFF0C;&#x5BF9;&#x4E8E;&#x4E4B;&#x540E;&#x8BB2;&#x89E3;&#x7684;&#x6A21;&#x5F0F;&#x540C;&#x6837;&#x4E5F;&#x662F;&#x6838;&#x5FC3;&#x7684;&#x6307;&#x5BFC;&#x65B9;&#x5411;&#x3002;&#x90A3;&#x4E48;&#x6211;&#x4EEC;&#x7EE7;&#x7EED;Joe&#x6240;&#x9047;&#x5230;&#x7684;Duck&#x95EE;&#x9898;&#x3002;</p>
+<h2 id="21&#x5206;&#x5F00;&#x53D8;&#x5316;&#x7684;&#x548C;&#x4E0D;&#x4F1A;&#x53D8;&#x5316;&#x7684;"><a name="21&#x5206;&#x5F00;&#x53D8;&#x5316;&#x7684;&#x548C;&#x4E0D;&#x4F1A;&#x53D8;&#x5316;&#x7684;" class="anchor-navigation-ex-anchor" href="#21&#x5206;&#x5F00;&#x53D8;&#x5316;&#x7684;&#x548C;&#x4E0D;&#x4F1A;&#x53D8;&#x5316;&#x7684;"><i class="fa fa-link" aria-hidden="true"></i></a>2.1&#x5206;&#x5F00;&#x53D8;&#x5316;&#x7684;&#x548C;&#x4E0D;&#x4F1A;&#x53D8;&#x5316;&#x7684;</h2>
+<p>&#x6211;&#x4EEC;&#x5F88;&#x6E05;&#x695A;&#xFF0C;Duck&#x7C7B;&#x5185;&#x90E8;&#x7684;fly()&#x548C;quark()&#x4F34;&#x968F;&#x7740;&#x9E2D;&#x5B50;&#x7684;&#x4E0D;&#x540C;&#x4F1A;&#x53D1;&#x751F;&#x6539;&#x53D8;&#xFF0C;&#x5176;&#x4ED6;&#x6A21;&#x5757;&#x662F;&#x4E0D;&#x53D8;&#x7684;&#x3002;&#x4E3A;&#x4E86;&#x8981;&#x628A;&#x8FD9;&#x4E24;&#x4E2A;&#x53D8;&#x5316;&#x7684;&#x884C;&#x4E3A;&#x4ECE;Duck&#x7C7B;&#x4E2D;&#x5206;&#x5F00;&#xFF0C;&#x6211;&#x4EEC;&#x628A;&#x5B83;&#x4EEC;&#x4ECE;Duck&#x7C7B;&#x4E2D;&#x62BD;&#x79BB;&#x51FA;&#x6765;&#xFF0C;&#x5EFA;&#x8BAE;&#x4E00;&#x7EC4;&#x65B0;&#x7C7B;&#x7528;&#x6765;&#x4EE3;&#x8868;&#x6BCF;&#x4E00;&#x4E2A;&#x884C;&#x4E3A;&#x3002;</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/2326194-bb290feee532ede5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Duck&#x53EF;&#x53D8;&#x4E0D;&#x53EF;&#x53D8;&#x5206;&#x6790;"></p>
+<p>&#x90A3;&#x4E48;&#xFF0C;&#x95EE;&#x9898;&#x6765;&#x4E86;&#x3002;&#x5982;&#x4F55;&#x8BBE;&#x8BA1;&#x90A3;&#x7EC4;&#x5B9E;&#x73B0;&#x98DE;&#x884C;&#x884C;&#x4E3A;&#x548C;&#x5471;&#x5471;&#x53EB;&#x884C;&#x4E3A;&#x7684;&#x4E00;&#x7EC4;&#x7C7B;&#x5462;&#xFF1F;
+&#x8FD9;&#x91CC;&#x5C31;&#x9700;&#x8981;&#x63D0;&#x53CA;&#x7B2C;&#x4E8C;&#x8BBE;&#x8BA1;&#x539F;&#x5219;</p>
+<blockquote>
+<p>&#x7B2C;&#x4E8C;&#x8BBE;&#x8BA1;&#x539F;&#x5219;
+  &#x9488;&#x5BF9;&#x4E8E;&#x63A5;&#x53E3;&#x7F16;&#x7A0B;&#xFF0C;&#x4E0D;&#x9488;&#x5BF9;&#x5B9E;&#x73B0;&#x7F16;&#x7A0B;</p>
+</blockquote>
+<p>&#x8FD9;&#x91CC;&#x6211;&#x4EEC;&#x5E0C;&#x671B;&#x7684;&#x662F;&#x5728;&#x521B;&#x5EFA;&#x5177;&#x4F53;&#x7684;Duck&#x7C7B;&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x53EF;&#x4EE5;&#x52A8;&#x6001;&#x7684;&#x751F;&#x6210;&#x5BF9;&#x5E94;&#x7684;&#x884C;&#x4E3A;&#x3002;&#x6253;&#x4E2A;&#x6BD4;&#x65B9;&#xFF0C;&#x6211;&#x4EEC;&#x60F3;&#x8981;&#x4EA7;&#x751F;&#x4E00;&#x4E2A;&#x65B0;&#x7684;&#x7EFF;&#x5934;&#x9E2D;&#xFF0C;&#x5C06;&#x5236;&#x5B9A;&#x7C7B;&#x578B;&#x7684;&#x98DE;&#x884C;&#x884C;&#x4E3A;&#x8D4B;&#x4E88;&#x7ED9;&#x5B83;&#x3002;&#x8FD9;&#x5C31;&#x8BF4;&#x660E;&#xFF0C;&#x5728;Duck&#x7C7B;&#x4E2D;&#xFF0C;&#x6211;&#x4EEC;&#x9700;&#x8981;&#x5305;&#x542B;&#x5B9A;&#x4E49;Duck&#x884C;&#x4E3A;&#x7684;&#x65B9;&#x6CD5;&#xFF0C;&#x8FD9;&#x6837;&#x5728;&#x8FD0;&#x884C;&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x6211;&#x4EEC;&#x5C31;&#x53EF;&#x4EE5;&#x52A8;&#x6001;&#x53BB;&#x6539;&#x53D8;&#x7EFF;&#x5934;&#x9E2D;&#x7684;&#x884C;&#x4E3A;&#x3002;
+&#x6240;&#x4EE5;&#x8FD9;&#x91CC;&#x6211;&#x4EEC;&#x4F7F;&#x7528;&#x4E24;&#x4E2A;&#x63A5;&#x53E3;&#x6765;&#x4EE3;&#x8868;&#x4E24;&#x4E2A;&#x884C;&#x4E3A;&#xFF0C;&#x8FD9;&#x91CC;&#x5B9A;&#x4E49;&#x4E3A; FlyBehavior&#x548C;QuarkBehavior&#xFF0C;&#x884C;&#x4E3A;&#x7684;&#x6BCF;&#x6B21;&#x5B9E;&#x73B0;&#xFF0C;&#x90FD;&#x5C06;&#x5B9E;&#x73B0;&#x5BF9;&#x5E94;&#x7684;&#x63A5;&#x53E3;&#x3002;</p>
+<p>&#x4F46;&#x662F;&#x63A5;&#x53E3;&#x7C7B;&#x662F;&#x6CA1;&#x6709;&#x65B9;&#x6CD5;&#x4F53;&#x7684;&#xFF0C;&#x4E5F;&#x5C31;&#x662F;&#x8BF4;&#xFF0C;&#x6211;&#x4EEC;&#x9700;&#x8981;&#x4E00;&#x7EC4;&#x7C7B;&#x5B9E;&#x73B0;&#x5BF9;&#x5E94;&#x7684;&#x884C;&#x4E3A;&#xFF0C;&#x8FD9;&#x4E9B;&#x4E13;&#x7528;&#x6765;&#x5B9E;&#x73B0;&#x7C7B;&#x4F3C;FlyBehavior&#x548C;QuarkBehavior&#x7684;&#x4E00;&#x7EC4;&#x7C7B;&#xFF0C;&#x6211;&#x4EEC;&#x79F0;&#x4E3A;<strong>&#x884C;&#x4E3A;&#x7C7B;</strong>&#x3002;</p>
+<p>&#x8FD9;&#x91CC;&#x63D0;&#x5230;&#x7684;&#x63A5;&#x53E3;&#x7C7B;&#x5E76;&#x975E;&#x4E25;&#x683C;&#x610F;&#x4E49;&#x4E0A;Java&#x4E2D;&#x7684;&#x63A5;&#x53E3;&#xFF08;Interface&#xFF09;&#xFF0C;&#x53EF;&#x4EE5;&#x7406;&#x89E3;&#x4E3A;&#x62BD;&#x8C61;&#x7C7B;&#x6216;&#x63A5;&#x53E3;&#x3002;&#x8FD9;&#x91CC;&#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x7406;&#x89E3;&#x4E3A;&#xFF1A;</p>
+<blockquote>
+<p>&quot;&#x9488;&#x5BF9;&#x63A5;&#x53E3;&#x7F16;&#x7A0B;&quot;&#x771F;&#x6B63;&#x7684;&#x610F;&#x601D;&#x662F;&#x201C;&#x9488;&#x5BF9;&#x8D85;&#x7C7B;&#x578B;&#xFF08;supertype&#xFF09;&#x7F16;&#x7A0B;&#x201D;</p>
+</blockquote>
+<p>&#x8FD9;&#x91CC;&#x8BB2;&#x5F97;&#x6709;&#x70B9;&#x96BE;&#x4EE5;&#x7406;&#x89E3;&#xFF0C;&#x6211;&#x4EEC;&#x5BF9;&#x6BD4;&#x4E00;&#x4E0B;&#x9488;&#x5BF9;&#x5B9E;&#x73B0;&#x7F16;&#x7A0B;&#x548C;&#x9488;&#x5BF9;&#x63A5;&#x53E3;&#x7F16;&#x7A0B;&#x7684;&#x533A;&#x522B;&#xFF1A;</p>
+<pre class="language-"><code>//&#x9488;&#x5BF9;&#x5B9E;&#x73B0;&#x7F16;&#x7A0B;
+Dog dog=new Dog();
+dog.bark();
+
+//&#x9488;&#x5BF9;&#x63A5;&#x53E3;&#x7F16;&#x7A0B;
+Animal animal=new Dog();
+animal.makeSoud();
+</code></pre><h2 id="22&#x5B9E;&#x73B0;&#x9E2D;&#x5B50;&#x7684;&#x884C;&#x4E3A;&#xFF08;&#x4EE3;&#x7801;&#xFF09;"><a name="22&#x5B9E;&#x73B0;&#x9E2D;&#x5B50;&#x7684;&#x884C;&#x4E3A;&#xFF08;&#x4EE3;&#x7801;&#xFF09;" class="anchor-navigation-ex-anchor" href="#22&#x5B9E;&#x73B0;&#x9E2D;&#x5B50;&#x7684;&#x884C;&#x4E3A;&#xFF08;&#x4EE3;&#x7801;&#xFF09;"><i class="fa fa-link" aria-hidden="true"></i></a>2.2&#x5B9E;&#x73B0;&#x9E2D;&#x5B50;&#x7684;&#x884C;&#x4E3A;&#xFF08;&#x4EE3;&#x7801;&#xFF09;</h2>
+<p>&#x4ECE;&#x4E0A;&#x9762;&#x7684;&#x8BB2;&#x89E3;&#xFF0C;&#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x7406;&#x89E3;&#x53EF;&#x53D8;&#x90E8;&#x5206;&#x662F;fly&#x548C;quack&#x4E24;&#x79CD;&#x65B9;&#x6CD5;&#x3002;&#x4E0D;&#x53EF;&#x53D8;&#x4E3A;Duck&#x7C7B;&#x3002;&#x90A3;&#x4E48;&#x8FD9;&#x91CC;&#x6211;&#x4EEC;&#x9700;&#x8981;&#x4F7F;&#x7528;&#x4E24;&#x4E2A;&#x63A5;&#x53E3;FlyBehavior&#x548C;QuackBehavior&#xFF0C;&#x8FD8;&#x6709;&#x4E00;&#x4E9B;&#x5217;&#x4ED6;&#x4EEC;&#x5BF9;&#x5E94;&#x7684;&#x884C;&#x4E3A;&#x7C7B;&#xFF0C;&#x5177;&#x4F53;&#x7684;&#x7ED3;&#x6784;&#x903B;&#x8F91;&#x5982;&#x4E0B;&#x56FE;&#xFF1A;</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/2326194-9678ca24253814c3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="&#x9E2D;&#x5B50;&#x884C;&#x4E3A;"></p>
+<p>&#x8FD9;&#x8BBE;&#x8BA1;&#x6709;&#x4E24;&#x4E2A;&#x5F88;&#x660E;&#x663E;&#x7684;&#x4F18;&#x52BF;&#xFF1A;</p>
+<ul>
+<li><p>&#x53EF;&#x4EE5;&#x8BA9;&#x98DE;&#x884C;&#x548C;&#x5471;&#x5471;&#x7684;&#x53EB;&#x7684;&#x52A8;&#x4F5C;&#x53EF;&#x4EE5;&#x88AB;&#x5176;&#x4ED6;&#x5BF9;&#x8C61;&#x590D;&#x7528;&#xFF0C;&#x56E0;&#x4E3A;&#x8FD9;&#x4E9B;&#x884C;&#x4E3A;&#x5DF2;&#x7ECF;&#x4E0E;&#x9E2D;&#x5B50;&#x7C7B;&#x65E0;&#x5173;&#x3002;&#x4E5F;&#x5C31;&#x662F;<strong>&#x89E3;&#x8026;</strong></p>
+</li>
+<li><p>&#x6211;&#x4EEC;&#x80FD;&#x591F;&#x5728;&#x4E0D;&#x5F71;&#x54CD;&#x539F;&#x6709;&#x7684;&#x884C;&#x4E3A;&#x7C7B;&#x7684;&#x60C5;&#x51B5;&#x4E0B;&#x65B0;&#x589E;&#x4E00;&#x4E9B;&#x884C;&#x4E3A;&#x3002;&#x4E5F;&#x5C31;&#x662F;&#x5177;&#x5907;&#x4E86;<strong>&#x5F39;&#x6027;</strong>&#x548C;<strong>&#x53EF;&#x62D3;&#x5C55;&#x6027;</strong></p>
+</li>
+</ul>
+<p>&#x62D3;&#x5C55;&#x51E0;&#x4E2A;&#x6982;&#x5FF5;&#xFF1A;</p>
+<blockquote>
+<p><strong>&#x8026;&#x5408;</strong>&#x6307;&#x7684;&#x5C31;&#x662F;&#x4E24;&#x4E2A;&#x7C7B;&#x4E4B;&#x95F4;&#x7684;&#x8054;&#x7CFB;&#x7684;&#x7D27;&#x5BC6;&#x7A0B;&#x5EA6;
+  <strong>&#x89E3;&#x8026;</strong>&#x6307;&#x7684;&#x662F;&#x89E3;&#x9664;&#x7C7B;&#x4E4B;&#x95F4;&#x7684;&#x76F4;&#x63A5;&#x5173;&#x7CFB;&#xFF0C;&#x5C06;&#x76F4;&#x63A5;&#x5173;&#x7CFB;&#x8F6C;&#x6362;&#x6210;&#x95F4;&#x63A5;&#x5173;&#x7CFB;
+&#x60F3;&#x8981;&#x4E86;&#x89E3;&#x7684;&#x53EF;&#x4EE5;&#x53C2;&#x8003;&#x8FD9;&#x7BC7;&#x6587;&#x7AE0;&#xFF1A;<a href="https://blog.csdn.net/qq_24499615/article/details/77821896" target="_blank">https://blog.csdn.net/qq_24499615/article/details/77821896</a>
+&#x63A5;&#x4E0B;&#x6765;&#x5206;&#x522B;&#x5C06;FlyBehavior,FlyWithWings,FlyNoWay&#x5206;&#x522B;&#x8D34;&#x4E0B;
+```
+public interface FlyBehavior {</p>
+</blockquote>
+<pre class="language-"><code>//&#x98DE;&#x884C;
+public void fly();
+</code></pre><p>}</p>
+<pre class="language-"><code>
+
+</code></pre><p>public class FlyWithWings implements FlyBehavior{</p>
+<pre class="language-"><code>public void fly() {
+  System.out.println(&quot;I am flying!&quot;);  
+}
+</code></pre><p>}</p>
+<pre class="language-"><code>```
+public class FlyNoWay implements FlyBehavior {
+
+    public void fly() {
+       System.out.println(&quot;I can&apos;t fly!&quot;); 
+
+    }
+
+}
+</code></pre><p>&#x63A5;&#x4E0B;&#x6765;&#x5C06;QuackBehavior&#xFF0C;Quack&#xFF0C;MuteQuack&#xFF0C;Squeak&#x7C7B;&#x7684;&#x4EE3;&#x7801;&#x5206;&#x522B;&#x8D34;&#x4E0B;&#xFF1A;</p>
+<pre class="language-"><code>public interface QuackBehavior {
+    //&#x5471;&#x5471;&#x53EB;
+    public void quack();
+}
+</code></pre><pre class="language-"><code>public class Quack implements QuackBehavior {
+
+    public void quack() {
+       System.out.println(&quot;Quack&quot;);
+
+    }
+
+}
+</code></pre><pre class="language-"><code>public class MuteQuack implements QuackBehavior {
+
+    public void quack() {
+        System.out.println(&quot;&lt;&lt; Slience&gt;&gt;&quot;);
+
+    }
+
+}
+</code></pre><pre class="language-"><code>public class Squeak implements QuackBehavior {
+
+    public void quack() {
+       System.out.println(&quot;Squeak&quot;);
+    }
+
+}
+</code></pre><p>&#x5230;&#x8FD9;&#x91CC;&#x5C06;fly&#x548C;quack&#x7684;&#x63A5;&#x53E3;&#x7C7B;&#x548C;&#x884C;&#x4E3A;&#x7C7B;&#x5B8C;&#x6210;&#x3002;</p>
+<h2 id="23&#x7EC4;&#x5408;&#x9E2D;&#x5B50;&#x884C;&#x4E3A;"><a name="23&#x7EC4;&#x5408;&#x9E2D;&#x5B50;&#x884C;&#x4E3A;" class="anchor-navigation-ex-anchor" href="#23&#x7EC4;&#x5408;&#x9E2D;&#x5B50;&#x884C;&#x4E3A;"><i class="fa fa-link" aria-hidden="true"></i></a>2.3&#x7EC4;&#x5408;&#x9E2D;&#x5B50;&#x884C;&#x4E3A;</h2>
+<p>&#x5728;&#x524D;&#x9762;2.2&#x6211;&#x4EEC;&#x5C06;&#x98DE;&#x884C;&#xFF08;fly&#xFF09;&#x548C;&#x5471;&#x5471;&#x53EB;&#xFF08;quack&#xFF09;&#x7684;&#x52A8;&#x4F5C;&quot;&#x59D4;&#x6258;&quot;&#xFF08;delegate&#xFF09;&#x7ED9;&#x5176;&#x4ED6;&#x63A5;&#x53E3;&#x7C7B;&#x5904;&#x7406;&#xFF0C;&#x800C;&#x5E76;&#x975E;&#x5728;Duck&#x7C7B;&#xFF08;&#x6216;&#x8005;&#x5B50;&#x7C7B;&#xFF09;&#x4E2D;&#x5B9A;&#x4E8E;fly&#x548C;quack&#x65B9;&#x6CD5;&#x3002;&#x90A3;&#x4E48;&#x5230;&#x5E95;&#x8BE5;&#x600E;&#x4E48;&#x628A;&#x884C;&#x4E3A;&#x7EC4;&#x5408;&#x8FDB;Duck&#x4E2D;&#xFF1F;</p>
+<ul>
+<li>1.&#x9996;&#x5148;&#x5728;Duck&#x7C7B;&#x4E2D;&#x589E;&#x52A0;&#x4E24;&#x4E2A;&#x201C;&#x5B9E;&#x4F8B;&#x53D8;&#x91CF;&#x201D;&#xFF0C;&#x5206;&#x522B;&#x4E3A;flyBehavior&#x548C;quackBehavior&#xFF0C;&#x58F0;&#x660E;&#x4E3A;&#x63A5;&#x53E3;&#x7C7B;&#x578B;&#xFF08;&#x6CE8;&#x610F;&#x4E0D;&#x662F;&#x5177;&#x4F53;&#x7C7B;&#x7684;&#x5B9E;&#x73B0;&#x7C7B;&#x578B;&#xFF09;&#xFF0C;&#x6BCF;&#x4E2A;Duck&#xFF08;&#x6216;&#x5176;&#x5B50;&#x7C7B;&#xFF09;&#x4F1A;&#x52A8;&#x6001;&#x7684;&#x8BBE;&#x7F6E;&#x8FD9;&#x4E9B;&#x53D8;&#x91CF;&#x4EE5;&#x5728;&#x8FD0;&#x884C;&#x65F6;&#x5F15;&#x7528;&#x6B63;&#x786E;&#x7684;&#x884C;&#x4E3A;&#x7C7B;&#x578B;&#xFF08;&#x5982;FlyWithWings&#xFF0C;Squeak&#x7B49;&#xFF09;&#x3002;Duck&#x7C7B;&#x7684;&#x7C7B;&#x7ED3;&#x6784;&#x5982;&#x4E0B;</li>
+</ul>
+<p>  <img src="https://upload-images.jianshu.io/upload_images/2326194-3677614f0bd46ade.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Duck&#x7C7B;&#x7ED3;&#x6784;"></p>
+<ul>
+<li><p>2.&#x90A3;&#x4E48;&#xFF0C;&#x5C31;&#x5F00;&#x59CB;&#x5B9E;&#x73B0;Duck&#x7C7B;</p>
+<pre class="language-"><code>public abstract class Duck {
+  //&#x4E3A;&#x884C;&#x4E3A;&#x63A5;&#x53E3;&#x7C7B;&#x578B;&#x58F0;&#x660E;&#x4E24;&#x4E2A;&#x5F15;&#x7528;&#x53D8;&#x91CF;&#xFF0C;&#x6240;&#x6709;&#x7684;&#x9E2D;&#x5B50;&#xFF08;&#x6216;&#x5B50;&#x7C7B;&#xFF09;&#x90FD;&#x7EE7;&#x627F;&#x5B83;&#x4EEC;
+  FlyBehavior flyBehavior;
+  QuackBehavior quackBehavior;
+
+  public Duck(){
+
+  }
+
+  public abstract void display();
+
+  public void performQuck(){
+      //&#x59D4;&#x6258;&#x7ED9;&#x884C;&#x4E3A;&#x5904;&#x7406;
+      quackBehavior.quack();
+  }
+
+  public void performFly(){
+    //&#x59D4;&#x6258;&#x7ED9;&#x884C;&#x4E3A;&#x5904;&#x7406;
+      flyBehavior.fly();
+  }
+
+  public void swim(){
+      System.out.println(&quot;All ducks float&quot;);
+  }
+}
+</code></pre><p>&#x7136;&#x540E;&#x6211;&#x4EEC;&#x5B9E;&#x73B0;&#x4E00;&#x4E2A;MallardDuck&#x7C7B;&#x6765;&#x5B9E;&#x73B0;&#x7EC4;&#x5408;&#xFF0C;</p>
+<pre class="language-"><code>public class MallardDuck extends Duck{
+
+  public MallardDuck(){
+      //&#x4F7F;&#x7528;FlyWithWings&#x4F5C;&#x4E3A;&#x5176;FlyBehavior&#x7C7B;&#x578B;
+      flyBehavior=new FlyWithWings();
+      //&#x7EFF;&#x5934;&#x9E2D;&#x4F7F;&#x7528;Quck&#x7C7B;&#x5904;&#x7406;&#x5471;&#x5471;&#x53EB;&#xFF0C;
+      //&#x6240;&#x4EE5;&#x5F53;performQuack&#x88AB;&#x8C03;&#x7528;&#x65F6;&#xFF0C;&#x53EB;&#x8FD9;&#x4E2A;&#x884C;&#x4E3A;&#x88AB;&#x59D4;&#x6258;&#x7ED9;Quck&#x5BF9;&#x8C61;
+      quackBehavior=new Quack();
+  }
+
+  /*
+   * &#x56E0;&#x4E3A;MallardDuck&#x7EE7;&#x627F;&#x81EA;Duck&#x7C7B;
+   * &#xFF0C;&#x6240;&#x4EE5;&#x5177;&#x5907;flyBehavior&#x4E0E;quackBehavior&#x5B9E;&#x4F8B;&#x53D8;&#x91CF;
+   */
+
+  public void display() {
+      // TODO Auto-generated method stub
+
+  }
+}
+</code></pre><p>&#x5F53;&#x7136;&#x6784;&#x9020;&#x5668;&#x5185;&#x8FD8;&#x662F;&#x9700;&#x8981;&#x5B9E;&#x73B0;&#x5177;&#x4F53;&#x884C;&#x4E3A;&#x7C7B;&#xFF0C;&#x8FD9;&#x5728;&#x4E4B;&#x540E;&#x7684;&#x6A21;&#x5F0F;&#x4E2D;&#x4F1A;&#x63D0;&#x4F9B;&#x76F8;&#x5E94;&#x7684;&#x89E3;&#x51B3;&#x65B9;&#x6848;&#xFF0C;&#x4E4B;&#x540E;&#x6211;&#x4EEC;&#x4F1A;&#x56DE;&#x5F52;&#x5230;&#x8FD9;&#x4E2A;&#x95EE;&#x9898;&#x7EE7;&#x7EED;&#x89E3;&#x51B3;&#x8FD9;&#x4E2A;&#x95EE;&#x9898;&#x3002;</p>
+</li>
+</ul>
+<p>&#x5230;&#x8FD9;&#x91CC;&#xFF0C;&#x7EC4;&#x5408;&#x9E2D;&#x5B50;&#x7C7B;&#x5DF2;&#x7ECF;&#x5B9E;&#x73B0;&#x3002;</p>
+<ul>
+<li><p>3.&#x6D4B;&#x8BD5;&#x6548;&#x679C;
+&#x8FD9;&#x91CC;&#x6211;&#x4EEC;&#x7F16;&#x8BD1;&#x6D4B;&#x8BD5;&#x7C7B;
+```
+public class MiniDuckSimilator {</p>
+<p>  public static void main(String[] args) {</p>
+<pre class="language-"><code>  Duck mallerdDuck=new MallardDuck();
+  //&#x4E00;&#x4E0B;&#x4EE3;&#x7801;&#x662F;&#x5C06;&#x5177;&#x4F53;&#x7684;&#x884C;&#x4E3A;&#x59D4;&#x6258;&#x7ED9;&#x5BF9;&#x5E94;&#x7684;&#x884C;&#x4E3A;&#x7C7B;&#x5904;&#x7406;&#x884C;&#x4E3A;
+  mallerdDuck.performQuck();
+  mallerdDuck.performFly();
+</code></pre><p>  }</p>
+</li>
+</ul>
+<p>}</p>
+<pre class="language-"><code>
+
+![&#x8FD0;&#x884C;&#x7ED3;&#x679C;](https://upload-images.jianshu.io/upload_images/2326194-d4b68c3aeb1df28f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+#2.4 &#x52A8;&#x6001;&#x884C;&#x4E3A;&#x8BBE;&#x5B9A;
+&#x5728;&#x4E4B;&#x524D;&#x7684;&#x5B9E;&#x73B0;&#x4E2D;&#x6211;&#x4EEC;&#x662F;&#x5728;Duck&#x7684;&#x5177;&#x4F53;&#x5B50;&#x7C7B;&#x4E2D;&#x5B9E;&#x73B0;FlyBehavior&#x548C;QuackBehavior&#x7684;&#x884C;&#x4E3A;&#xFF0C;&#x4F46;&#x662F;Duck&#x5931;&#x53BB;&#x4E86;&#x52A8;&#x6001;&#x8BBE;&#x5B9A;&#x7684;&#x529F;&#x80FD;&#xFF0C;&#x5BF9;&#x4E8E;&#x8FFD;&#x6C42;&#x5B8C;&#x7F8E;&#x7684;&#x7A0B;&#x5E8F;&#x5458;&#x6765;&#x8BF4;&#x662F;&#x4E0D;&#x53EF;&#x9976;&#x6055;&#x7684;&#x3002;&#x6240;&#x4EE5;&#x6025;&#x5207;&#x9700;&#x8981;&#x901A;&#x8FC7;&#x4E00;&#x4E2A;&#x65B9;&#x6CD5;&#x52A8;&#x6001;&#x8BBE;&#x5B9A;&#x884C;&#x4E3A;&#xFF0C;&#x800C;&#x5E76;&#x975E;&#x662F;&#x5728;&#x9E2D;&#x5B50;&#xFF08;Duck&#xFF09;&#x7684;&#x6784;&#x9020;&#x5668;&#x4E2D;&#x53BB;&#x5B9E;&#x4F8B;&#x5316;&#x3002;&#x8FD9;&#x91CC;&#x63A8;&#x8350;&#x4E00;&#x4E2A;&#x65B9;&#x6CD5;-----**&#x8BBE;&#x5B9A;&#x65B9;&#x6CD5;&#xFF08;setter method&#xFF09;**
+
+* 1. &#x5728;Duck&#x7C7B;&#x4E2D;&#x589E;&#x52A0;&#x4E24;&#x4E2A;&#x65B0;&#x65B9;&#x6CD5; setFlyBehavior()&#x548C;setQuckBehavior().&#x5BF9;&#x4E8E;Duck&#x7684;&#x7C7B;&#x7ED3;&#x6784;&#x4FEE;&#x6539;&#x5982;&#x4E0B;
+
+    ![image.png](https://upload-images.jianshu.io/upload_images/2326194-7d5c581118a4372b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+    &#x5177;&#x4F53;&#x4FEE;&#x6539;&#x5982;&#x4E0B;
+</code></pre><p>public abstract class Duck {
+    //&#x4E3A;&#x884C;&#x4E3A;&#x63A5;&#x53E3;&#x7C7B;&#x578B;&#x58F0;&#x660E;&#x4E24;&#x4E2A;&#x5F15;&#x7528;&#x53D8;&#x91CF;&#xFF0C;&#x6240;&#x6709;&#x7684;&#x9E2D;&#x5B50;&#xFF08;&#x6216;&#x5B50;&#x7C7B;&#xFF09;&#x90FD;&#x7EE7;&#x627F;&#x5B83;&#x4EEC;
+    FlyBehavior flyBehavior;
+    QuackBehavior quackBehavior;</p>
+<pre class="language-"><code>public Duck(){
+
+}
+
+public abstract void display();
+
+public void performQuck(){
+    //&#x59D4;&#x6258;&#x7ED9;&#x884C;&#x4E3A;&#x5904;&#x7406;
+    quackBehavior.quack();
+}
+
+public void performFly(){
+  //&#x59D4;&#x6258;&#x7ED9;&#x884C;&#x4E3A;&#x5904;&#x7406;
+    flyBehavior.fly();
+}
+
+public void setFlyBehavior(FlyBehavior flyBehavior){
+    this.flyBehavior=flyBehavior;
+}
+
+public void setQuackBehavior(QuackBehavior quackBehavior){
+    this.quackBehavior=quackBehavior;
+}
+
+public void swim(){
+    System.out.println(&quot;All ducks float&quot;);
+}
+</code></pre><p>}</p>
+<pre class="language-"><code>* 2.&#x521B;&#x5EFA;&#x4E00;&#x4E2A;&#x65B0;&#x7684;&#x9E2D;&#x5B50;&#x6A21;&#x578B;&#xFF1A;&#x6A21;&#x578B;&#x9E2D;&#xFF08;ModelDuck&#xFF09;
+</code></pre><p>public class ModelDuck extends Duck{</p>
+<pre class="language-"><code>public ModelDuck(){
+    flyBehavior=new FlyNoWay();
+    quackBehavior=new Quack();
+}
+
+public void display() {
+   System.out.println(&quot;I&apos;m a model duck&quot;);
+
+}
+</code></pre><p>}</p>
+<pre class="language-"><code>* 3.&#x65B0;&#x5EFA;&#x7ACB;&#x4E00;&#x4E2A;&#x65B0;&#x7684;FlyBehavior&#x7C7B;&#x578B; FlyRocketPowered
+</code></pre><p>public class FlyRocketPowered implements FlyBehavior{</p>
+<pre class="language-"><code>public void fly() {
+  System.out.println(&quot;I&apos;m flying with a rocket!&quot;);
+
+}
+</code></pre><p>}</p>
+<pre class="language-"><code>* 4.&#x4FEE;&#x6539;&#x6D4B;&#x8BD5;&#x7C7B;MiniDuckSimulator&#xFF0C;&#x52A0;&#x4E0A;&#x6A21;&#x578B;&#x9E2D;&#xFF0C;&#x5E76;&#x4EE4;&#x6A21;&#x578B;&#x9E2D;&#x5177;&#x5907;&#x706B;&#x7BAD;&#x52A8;&#x529B;
+</code></pre><p>public class MiniDuckSimilator {</p>
+<pre class="language-"><code>public static void main(String[] args) {
+    Duck mallerdDuck=new MallardDuck();
+    //&#x4E00;&#x4E0B;&#x4EE3;&#x7801;&#x662F;&#x5C06;&#x5177;&#x4F53;&#x7684;&#x884C;&#x4E3A;&#x59D4;&#x6258;&#x7ED9;&#x5BF9;&#x5E94;&#x7684;&#x884C;&#x4E3A;&#x7C7B;&#x5904;&#x7406;&#x884C;&#x4E3A;
+    mallerdDuck.performQuck();
+    mallerdDuck.performFly();
+
+    Duck modelDuck=new ModelDuck();
+    //&#x7B2C;&#x4E00;&#x6B21;&#x4F1A;&#x4F7F;&#x7528;&#x6784;&#x9020;&#x53C2;&#x6570;&#x91CC;&#x7684;&#x98DE;&#x884C;&#x6A21;&#x5F0F;
+    modelDuck.performFly();
+    modelDuck.setFlyBehavior(new FlyRocketPowered());
+    //&#x6A21;&#x578B;&#x9E2D;&#x5177;&#x5907;&#x706B;&#x7BAD;&#x98DE;&#x884C;&#x80FD;&#x529B;
+    modelDuck.performFly();
+
+}
+</code></pre><p>}
+```</p>
+<p>&#x8FD0;&#x884C;&#x7ED3;&#x679C;&#xFF1A;</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/2326194-9c0d5985ffd0655a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="&#x8FD0;&#x884C;&#x7ED3;&#x679C;"></p>
+<p>&#x5230;&#x8FD9;&#x91CC;&#x6211;&#x4EEC;&#x53D1;&#x73B0;&#x9E2D;&#x5B50;&#x6A21;&#x578B;&#x4E2D;&#x6211;&#x4EEC;&#x4F7F;&#x7528;&#x5230;&#x7C7B;&#x7684;&#x7EC4;&#x5408;&#x4F7F;&#x7528;&#xFF0C;&#x800C;&#x8FD9;&#x91CC;&#x6211;&#x4EEC;&#x6D89;&#x53CA;&#x5230;&#x7B2C;&#x4E09;&#x4E2A;&#x8BBE;&#x8BA1;&#x539F;&#x5219;&#xFF1A;</p>
+<blockquote>
+<p>&#x7B2C;&#x4E09;&#x4E2A;&#x8BBE;&#x8BA1;&#x539F;&#x5219;
+  &#x591A;&#x7528;&#x7EC4;&#x5408;&#xFF0C;&#x5C11;&#x7528;&#x7EE7;&#x627F;</p>
+</blockquote>
+<p>&#x6B63;&#x5982;&#x6211;&#x4EEC;&#x6240;&#x89C1;&#xFF0C;&#x7EC4;&#x5408;&#x6240;&#x5EFA;&#x7ACB;&#x7684;&#x7CFB;&#x7EDF;&#x5177;&#x5907;&#x6781;&#x5927;&#x7684;&#x5F39;&#x6027;&#xFF0C;&#x4E0D;&#x4EC5;&#x4EC5;&#x53EF;&#x4EE5;&#x5C06;&#x884C;&#x4E3A;&#x5C01;&#x88C5;&#x4E3A;&#x4E00;&#x7CFB;&#x5217;&#x7684;&#x884C;&#x4E3A;&#x7C7B;&#xFF0C;&#x66F4;&#x53EF;&#x4EE5;&#x52A8;&#x6001;&#x6539;&#x53D8;&#x884C;&#x4E3A;&#xFF0C;&#x53EA;&#x9700;&#x8981;&#x7EC4;&#x5408;&#x7684;&#x884C;&#x4E3A;&#x5BF9;&#x8C61;&#x662F;&#x7B26;&#x5408;&#x6B63;&#x786E;&#x7684;&#x884C;&#x4E3A;&#x63A5;&#x53E3;&#x6807;&#x51C6;&#x7684;&#x3002;</p>
+<h1 id="3&#x7B56;&#x7565;&#x6A21;&#x5F0F;&#x8BB2;&#x89E3;"><a name="3&#x7B56;&#x7565;&#x6A21;&#x5F0F;&#x8BB2;&#x89E3;" class="anchor-navigation-ex-anchor" href="#3&#x7B56;&#x7565;&#x6A21;&#x5F0F;&#x8BB2;&#x89E3;"><i class="fa fa-link" aria-hidden="true"></i></a>3.&#x7B56;&#x7565;&#x6A21;&#x5F0F;&#x8BB2;&#x89E3;</h1>
+<p>&#x603B;&#x7ED3;&#x4E4B;&#x524D;&#x7684;&#x4E09;&#x4E2A;&#x8BBE;&#x8BA1;&#x539F;&#x5219;&#xFF1A;</p>
+<blockquote>
+<p>&#x7B2C;&#x4E00;&#x8BBE;&#x8BA1;&#x539F;&#x5219;
+&#x627E;&#x51FA;&#x5E94;&#x7528;&#x4E2D;&#x53EF;&#x80FD;&#x9700;&#x8981;&#x53D8;&#x5316;&#x4E4B;&#x5904;&#xFF0C;&#x628A;&#x5B83;&#x4EEC;&#x72EC;&#x7ACB;&#x51FA;&#x6765;&#xFF0C;&#x4E0D;&#x8981;&#x548C;&#x90A3;&#x4E9B;&#x4E0D;&#x9700;&#x8981;&#x53D8;&#x5316;&#x7684;&#x4EE3;&#x7801;&#x6DF7;&#x5408;&#x5728;&#x4E00;&#x8D77;&#x3002;</p>
+<p>&#x7B2C;&#x4E8C;&#x8BBE;&#x8BA1;&#x539F;&#x5219;
+&#x9488;&#x5BF9;&#x4E8E;&#x63A5;&#x53E3;&#x7F16;&#x7A0B;&#xFF0C;&#x4E0D;&#x9488;&#x5BF9;&#x5B9E;&#x73B0;&#x7F16;&#x7A0B;</p>
+<p>&#x7B2C;&#x4E09;&#x8BBE;&#x8BA1;&#x539F;&#x5219;
+&#x591A;&#x7528;&#x7EC4;&#x5408;&#xFF0C;&#x5C11;&#x7528;&#x7EE7;&#x627F;</p>
+</blockquote>
+<p>&#x603B;&#x7ED3;&#x8FD9;&#x4E09;&#x6761;&#x539F;&#x5219;&#x7ED3;&#x5408;&#x8D77;&#x6765;&#x5C31;&#x662F;&#x6211;&#x4EEC;&#x5B66;&#x4E60;&#x7684;&#x7B2C;&#x4E00;&#x4E2A;&#x6A21;&#x5F0F;&#xFF1A;</p>
+<blockquote>
+<p><strong>&#x7B56;&#x7565;&#x6A21;&#x5F0F;</strong> &#x5B9A;&#x4E49;&#x4E86;&#x7B97;&#x6CD5;&#x65CF;&#xFF0C;&#x5206;&#x522B;&#x5C01;&#x88C5;&#x8D77;&#x6765;&#xFF0C;&#x8BA9;&#x5B83;&#x4EEC;&#x4E4B;&#x95F4;&#x53EF;&#x4EE5;&#x76F8;&#x4E92;&#x66FF;&#x6362;&#xFF0C;&#x6B64;&#x6A21;&#x5F0F;&#x8BA9;&#x7B97;&#x6CD5;&#x7684;&#x53D8;&#x5316;&#x72EC;&#x7ACB;&#x4E8E;&#x4F7F;&#x7528;&#x7B97;&#x6CD5;&#x7684;&#x5BA2;&#x6237;&#x3002;</p>
+</blockquote>
+<footer class="page-footer"><span class="copyright">Copyright &#xA9; jiaojiao52002.cn 2019 all right reserved&#xFF0C;powered by Gitbook</span><span class="footer-modification">&#x8BE5;&#x6587;&#x4EF6;&#x4FEE;&#x8BA2;&#x65F6;&#x95F4;&#xFF1A;
+2019-07-12 15:13:54
+</span></footer>
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="./" class="navigation navigation-prev " aria-label="Previous page: Introduction">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="Head-First-设计模式2---观察者（Observer）模式.html" class="navigation navigation-next " aria-label="Next page: Head-First-设计模式2---观察者（Observer）模式">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"Head-First-设计模式1-----策略模式","level":"2.1","depth":1,"next":{"title":"Head-First-设计模式2---观察者（Observer）模式","level":"2.2","depth":1,"path":"Head-First-设计模式2---观察者（Observer）模式.md","ref":"Head-First-设计模式2---观察者（Observer）模式.md","articles":[]},"previous":{"title":"Introduction","level":"1.1","depth":1,"path":"README.md","ref":"README.md","articles":[]},"dir":"ltr"},"config":{"plugins":["theme-comscore","prism","-highlight","copy-code-button","search-pro","-search","-lunr","expandable-chapters","splitter","-sharing","github-buttons","donate","tbfed-pagefooter","baidu-tongji","anchor-navigation-ex","livereload"],"styles":{"website":"./public-repertory/css/gitbook-configure.css"},"pluginsConfig":{"tbfed-pagefooter":{"copyright":"Copyright &copy jiaojiao52002.cn 2019","modify_label":"该文件修订时间：","modify_format":"YYYY-MM-DD HH:mm:ss"},"prism":{"css":["prismjs/themes/prism-solarizedlight.css"],"lang":{"shell":"bash"}},"livereload":{},"baidu-tongji":{"url":"https://hm.baidu.com/hm.js","token":"89a6cd4dac6db5e9826cf2e218d990c1"},"splitter":{},"search-pro":{},"donate":{"alipay":"https://github.com/LiangJunrong/document-library/blob/master/public-repertory/img/seek-reward.jpg?raw=true","alipayText":"支付宝打赏","button":"打赏","title":"","wechat":"https://github.com/LiangJunrong/document-library/blob/master/public-repertory/img/seek-reward.png?raw=true","wechatText":"微信打赏"},"fontsettings":{"theme":"white","family":"sans","size":2},"anchor-navigation-ex":{"associatedWithSummary":true,"float":{"floatIcon":"fa fa-navicon","level1Icon":"","level2Icon":"","level3Icon":"","showLevelIcon":false},"mode":"float","multipleH1":true,"pageTop":{"level1Icon":"","level2Icon":"","level3Icon":"","showLevelIcon":false},"printLog":false,"showGoTop":true,"showLevel":false},"theme-comscore":{},"github-buttons":{"buttons":[{"user":"jixiang52002","repo":"document-library","type":"star","count":true,"size":"small"},{"user":"jixiang52002","width":"160","type":"follow","count":true,"size":"small"}]},"copy-code-button":{},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"expandable-chapters":{}},"theme":"default","author":"吉祥 - jixiang52002","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"jixiang52002 的文档库","language":"zh-hans","gitbook":"*","description":"jixiang52002 的文档库. 里面包含了个人撰写的所有前端文章，例如 Vue、React,、ECharts、微信小程序等……"},"file":{"path":"Head-First-设计模式1-----策略模式.md","mtime":"2019-07-12T07:13:54.790Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2019-07-31T03:28:27.533Z"},"basePath":".","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="gitbook/gitbook.js"></script>
+    <script src="gitbook/theme.js"></script>
+    
+        
+        <script src="gitbook/gitbook-plugin-copy-code-button/toggle.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-search-pro/jquery.mark.min.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-search-pro/search.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-expandable-chapters/expandable-chapters.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-splitter/splitter.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-github-buttons/plugin.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-donate/plugin.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-baidu-tongji/plugin.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-livereload/plugin.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-theme-comscore/test.js"></script>
+        
+    
+
+    </body>
+</html>
+
