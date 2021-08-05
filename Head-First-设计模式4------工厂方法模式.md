@@ -154,13 +154,16 @@ public class PizzaStore {
 首先是设计结构，PizzaStore
 ![直营店模式](https://user-gold-cdn.xitu.io/2019/9/10/16d1a388d8994f06?w=1240&h=565&f=png&s=102649)
 所以这里我们需要拓展SimplePizzaFactory，这里需要类似于NYPizzaFactory、ChicagoPizzaFactory、ChinaPizzaFactory（甚至可以再细分)，那么准备一份Pizza的流程就需要更改
+
 ```
 NYPizzaFactory factory=new NYPizzaFactory();
 PizzaStore nyStore=new PizzaStore();
 nyStore.oderPizza("Veggie");
 ```
 相对来说就非常简单。那么如果是加盟商模式呢
-# 4.2 加盟商模式
+
+## 4.2 加盟商模式
+
 在某些加盟商里有一些经验很丰富的厨师，他们在做Pizza的时候，会加入自己的一些思路和想法，比如：
 过量的芝士，本地风味的榴莲，甚至可能存在双拼的情况。但是我们知道，我们在一开始是将这些操作放在SimplePizzaFactory里，这就使得代码结构不具备活性。就是前面提到的，拓展和修改方面不满足需求。
 那么，如何修改现有的结构可以满足需求呢？

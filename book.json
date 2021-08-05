@@ -1,7 +1,7 @@
 {
-  "title": "jixiang52002 的文档库",
-  "author": "吉祥 - jixiang52002",
-  "description": "jixiang52002 的文档库. 里面包含了个人撰写的所有前端文章，例如 Vue、React,、ECharts、微信小程序等……",
+  "title": "jiaoery 的文档库",
+  "author": "吉祥 - jiaoery",
+  "description": "jiaoery 的文档库. 里面包含了个人撰写的所有文章",
   "language": "zh-hans",
   "styles": {
     "website": "./public-repertory/css/gitbook-configure.css"
@@ -27,14 +27,14 @@
     "github-buttons": {
       "buttons": [
         {
-          "user": "jixiang52002",
+          "user": "jiaoery",
           "repo": "document-library", 
           "type": "star",
           "count": true,
           "size": "small"
         }, 
         {
-          "user": "jixiang52002",
+          "user": "jiaoery",
           "width": "160", 
           "type": "follow", 
           "count": true,
@@ -46,8 +46,8 @@
       "button": "打赏",
       "alipayText": "支付宝打赏",
       "wechatText": "微信打赏",
-      "alipay": "https://github.com/jixiang52002/document-library/blob/master/zhifubao.jpg?raw=true",
-      "wechat": "https://github.com/jixiang52002/document-library/blob/master/weixin.jpg?raw=true"
+      "alipay": "https://github.com/jiaoery/document-library/blob/master/zhifubao.jpg?raw=true",
+      "wechat": "https://github.com/jiaoery/document-library/blob/master/weixin.jpg?raw=true"
     },
     "prism": {
       "css": [

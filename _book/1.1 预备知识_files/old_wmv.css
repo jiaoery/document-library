@@ -1,0 +1,25 @@
+div, p, dl, dt, dd, pre, fieldset, blockquote, th, td { margin:0px auto; padding:0px;font-size:14px;}
+.bzxj {background-attachment: fixed;padding-top: 33px;padding-left: 33px;background: url(../images/old_wmv/xj.gif) no-repeat left top;}
+#popup-win{display:none;position:absolute;z-index:800;border:solid 1px #28b5ab;width:200px;height:120px;background-color:white;}
+#popup-win .head{font-size:12px;color:white;padding-top:0;padding-left:5px;padding-right:5px;height:20px;background:#3ac1b8 url(../images/old_wmv/window_top_bg.gif) repeat-x left top;overflow:hidden;}
+#popup-win .head span{float:right;}
+.tab {border: 1px dashed #003333;margin-left: 26px;margin-top: 8px;padding: 5px;}
+.xydybg {background-image: url(../images/old_wmv/xydy.jpg);background-repeat: no-repeat;}
+.fenlu1 {color: #408080;font-weight: normal;}
+.fenlu2 {color: #993399;font-weight: normal;}
+.zdjc {font-weight: bold;}
+.Title2 {font-size: 14px;font-weight: bold;padding-top: 10px;}
+.fenlu {border: none;font-size: 13px;color: #4B6246;padding: 2px 0px 0px 8px;margin-top: 0px;margin-bottom: 0px;margin-left: 0px;background-image: url(../images/old_wmv/fenlu.gif);background-repeat: no-repeat;height: 22px;}
+a:link.link2{background-image:url(../images/old_wmv/pizh1.gif);background-repeat: no-repeat;background-position: bottom center;text-decoration:none;
+	font-size:30px;padding:2px 2px;}
+a:hover.link2,a:active.link2,a:visited.link2{background-image: url(../images/old_wmv/pizh2.gif);background-repeat: no-repeat;background-position: bottom center;text-decoration:none;font-size:30px;padding:2px 2px;}
+.u {text-decoration: underline;}
+a:link.link3{background-image: url(../images/old_wmv/fayi1.gif);background-repeat: no-repeat;background-position: bottom center;text-decoration:none;font-size:30px;padding:2px 2px;}
+a:hover.link3,a:active.link3,a:visited.link3  {background-image: url(../images/old_wmv/fayi2.gif);background-repeat: no-repeat;background-position: bottom center;text-decoration:none;font-size:30px;padding:2px 2px;}
+.zd {color: #996600;}
+.zd1 {color: #996600;text-decoration: underline;}
+.underline{text-decoration:underline;}
+.HDiv{display:none;font-size:14px;padding:5px;color:#F000000;border:1px dashed #61584F;background-color: }
+.HDiv p{text-indent:24px;}
+
+
