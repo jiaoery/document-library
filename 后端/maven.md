@@ -92,15 +92,15 @@ a-maven-project
 
 * 1.在[官网](https://maven.apache.org/)下载对应的maven版本
 
-* 2.配置环境变量 MAVEN_HOME ,path ![image-20220309165315578](img\image-20220309165315578.png)
+* 2.配置环境变量 MAVEN_HOME ,path <img src="img/image-20220309165315578.png" alt="image-20220309165315578" style="zoom:50%;" />
 
-  ![image-20220309165604693](img\image-20220309165604693.png)
+  ![image-20220309165604693](img/image-20220309165604693.png)
 
 * 3.命令行检测是否配置成功
 
 > mvn -version
 
-![image-20220309165806349](img\image-20220309165806349.png)
+![image-20220309165806349](img/image-20220309165806349.png)
 
 ## 5.依赖管理
 
