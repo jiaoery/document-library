@@ -98,3 +98,678 @@ DUbbo：https://dubbo.apache.org/zh/docs/
 选择依赖环境
 
 ![image-20220322174457237](img/image-20220322174457237.png)
+
+如果想更改banner，可以在resource创建一个banner.txt文件https://www.bootschool.net/ascii
+
+如佛祖效果如下：
+
+```assic
+////////////////////////////////////////////////////////////////////
+//                          _ooOoo_                               //
+//                         o8888888o                              //
+//                         88" . "88                              //
+//                         (| ^_^ |)                              //
+//                         O\  =  /O                              //
+//                      ____/`---'\____                           //
+//                    .'  \\|     |//  `.                         //
+//                   /  \\|||  :  |||//  \                        //
+//                  /  _||||| -:- |||||-  \                       //
+//                  |   | \\\  -  /// |   |                       //
+//                  | \_|  ''\---/''  |   |                       //
+//                  \  .-\__  `-`  ___/-. /                       //
+//                ___`. .'  /--.--\  `. . ___                     //
+//              ."" '<  `.___\_<|>_/___.'  >'"".                  //
+//            | | :  `- \`.;`\ _ /`;.`/ - ` : | |                 //
+//            \  \ `-.   \_ __\ /__ _/   .-` /  /                 //
+//      ========`-.____`-.___\_____/___.-`____.-'========         //
+//                           `=---='                              //
+//      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^        //
+//            佛祖保佑       永不宕机     永无BUG                    //
+////////////////////////////////////////////////////////////////////
+```
+
+## 5.自动装配原理初探
+
+### 5.1 porm.xml文件
+
+* spring-boot-dependences：核心依赖在父工程中
+* springboot引入时无需引入版本，原因在于父工程已经引入版本
+
+```xml
+<parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.6.4</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+```
+
+其中具备一个父级依赖
+
+```xml
+<parent>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-dependencies</artifactId>
+  <version>2.6.4</version>
+</parent>
+```
+
+这里才是真正管理SpringBoot应用里面所有依赖版本的地方，SpringBoot的版本控制中心；
+
+**以后我们导入依赖默认是不需要写版本；但是如果导入的包没有在依赖中管理着就需要手动配置版本了；**
+
+启动器
+
+* 可以理解为springboot的一个场景
+* spring-boot-starters 可以引入所有的依赖
+* springboot的作用在于把场景变成启动器
+
+```xml
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starters</artifactId>
+</dependency>
+```
+
+**springboot-boot-starter-xxx**：就是spring-boot的场景启动器
+
+**spring-boot-starter-web**：帮我们导入了web模块正常运行所依赖的组件；
+
+```xml
+<!--web场景启动器-->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+```
+
+### 5.2主启动文件
+
+#### 5.2.1 默认主启动文件
+
+```java
+/程序主入口
+//@SpringBootApplication 用来标注
+@SpringBootApplication
+public class DemoApplication {
+
+    public static void main(String[] args) {
+      //以为是启动了一个方法，其实是启动了一个服务
+        SpringApplication.run(DemoApplication.class, args);
+    }
+
+}
+```
+
+ #### 5.2.2 @SpringBootApplication
+
+作用：标注在某个类上说明这个类是SpringBoot的主配置类 ， SpringBoot就应该运行这个类的main方法来启动SpringBoot应用；
+
+```java
+
+@SpringBootConfiguration
+@EnableAutoConfiguration
+@ComponentScan(
+    excludeFilters = {@Filter(
+    type = FilterType.CUSTOM,
+    classes = {TypeExcludeFilter.class}
+), @Filter(
+    type = FilterType.CUSTOM,
+    classes = {AutoConfigurationExcludeFilter.class}
+)}
+)
+public @interface SpringBootApplication {
+  ...
+}
+```
+
+* @ComponentScan:
+  * 这个注解在Spring中很重要 ,它对应XML配置中的元素
+  * 作用：自动扫描并加载符合条件的组件或者bean ， 将这个bean定义加载到IOC容器中
+* @SpringBootConfiguration
+  * 作用：SpringBoot的配置类 ，标注在某个类上 ， 表示这是一个SpringBoot的配置类；
+* @EnableAutoConfiguration
+  * **@EnableAutoConfiguration ：开启自动配置功能**
+  * @EnableAutoConfiguration告诉SpringBoot开启自动配置功能，这样自动配置才能生效；
+
+```java
+
+@Import({AutoConfigurationImportSelector.class})
+public @interface EnableAutoConfiguration {
+    ...
+}
+```
+
+* **@import** ：Spring底层注解@import ， 给容器中导入一个组件
+
+* **@Import({AutoConfigurationImportSelector.class}) ：给容器导入组件 ；**
+
+  AutoConfigurationImportSelector ：自动配置导入选择器，那么它会导入哪些组件的选择器呢？我们点击去这个类看源码：
+
+```java
+protected List<String> getCandidateConfigurations(AnnotationMetadata metadata, AnnotationAttributes attributes) {
+        List<String> configurations = SpringFactoriesLoader.loadFactoryNames(this.getSpringFactoriesLoaderFactoryClass(), this.getBeanClassLoader());
+        Assert.notEmpty(configurations, "No auto configuration classes found in META-INF/spring.factories. If you are using a custom packaging, make sure that file is correct.");
+        return configurations;
+    }
+```
+
+这个方法又调用了  SpringFactoriesLoader 类的静态方法！我们进入SpringFactoriesLoader类loadFactoryNames() 方法
+
+```java
+ public static List<String> loadFactoryNames(Class<?> factoryType, @Nullable ClassLoader classLoader) {
+        ClassLoader classLoaderToUse = classLoader;
+        if (classLoader == null) {
+            classLoaderToUse = SpringFactoriesLoader.class.getClassLoader();
+        }
+
+        String factoryTypeName = factoryType.getName();
+   //这里它又调用了 loadSpringFactories 方法
+        return (List)loadSpringFactories(classLoaderToUse).getOrDefault(factoryTypeName, Collections.emptyList());
+    }
+```
+
+我们继续点击查看 loadSpringFactories 方法
+
+```java
+ private static Map<String, List<String>> loadSpringFactories(ClassLoader classLoader) {
+        Map<String, List<String>> result = (Map)cache.get(classLoader);
+        if (result != null) {
+            return result;
+        } else {
+            HashMap result = new HashMap();
+
+            try {
+                Enumeration urls = classLoader.getResources("META-INF/spring.factories");
+
+                while(urls.hasMoreElements()) {
+                    URL url = (URL)urls.nextElement();
+                    UrlResource resource = new UrlResource(url);
+                    Properties properties = PropertiesLoaderUtils.loadProperties(resource);
+                    Iterator var6 = properties.entrySet().iterator();
+
+                    while(var6.hasNext()) {
+                        Entry<?, ?> entry = (Entry)var6.next();
+                        String factoryTypeName = ((String)entry.getKey()).trim();
+                        String[] factoryImplementationNames = StringUtils.commaDelimitedListToStringArray((String)entry.getValue());
+                        String[] var10 = factoryImplementationNames;
+                        int var11 = factoryImplementationNames.length;
+
+                        for(int var12 = 0; var12 < var11; ++var12) {
+                            String factoryImplementationName = var10[var12];
+                            ((List)result.computeIfAbsent(factoryTypeName, (key) -> {
+                                return new ArrayList();
+                            })).add(factoryImplementationName.trim());
+                        }
+                    }
+                }
+
+                result.replaceAll((factoryType, implementations) -> {
+                    return (List)implementations.stream().distinct().collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
+                });
+                cache.put(classLoader, result);
+                return result;
+            } catch (IOException var14) {
+                throw new IllegalArgumentException("Unable to load factories from location [META-INF/spring.factories]", var14);
+            }
+        }
+    }
+```
+
+其中**META-INF/spring.factories**这个文件多次出现
+
+找到这个文件
+
+![image-20220401173704367](img/image-20220401173704367.png)
+
+
+
+**WebMvcAutoConfiguration**结构
+
+![image-20220401174302924](img/image-20220401174302924.png)
+
+所以，自动配置真正实现是从classpath中搜寻所有的META-INF/spring.factories配置文件 ，并将其中对应的 org.springframework.boot.autoconfigure. 包下的配置项，通过反射实例化为对应标注了 @Configuration的JavaConfig形式的IOC容器配置类 ， 然后将这些都汇总成为一个实例并加载到IOC容器中。
+
+#### 5.2.3 SpringApplication
+
+我最初以为就是运行了一个main方法，没想到却开启了一个服务；
+
+```java
+
+@SpringBootApplication
+public class SpringbootApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(SpringbootApplication.class, args);
+    }
+}
+```
+
+**SpringApplication.run分析**
+
+分析该方法主要分两部分，一部分是SpringApplication的实例化，二是run方法的执行；
+
+**这个类主要做了以下四件事情：**
+
+* 断定应用是普通应用还是web应用
+* 查找并加载所有可用初始化器 ， 设置到initializers属性中
+* 找出所有的应用程序监听器，设置到listeners属性中
+* 推断并设置main方法的定义类，找到运行的主类
+
+查看构造器：
+
+```java
+
+public SpringApplication(ResourceLoader resourceLoader, Class... primarySources) {
+    // ......
+    this.webApplicationType = WebApplicationType.deduceFromClasspath();
+    this.setInitializers(this.getSpringFactoriesInstances();
+    this.setListeners(this.getSpringFactoriesInstances(ApplicationListener.class));
+    this.mainApplicationClass = this.deduceMainApplicationClass();
+}
+```
+
+run方法核心流程
+
+
+
+![图片](https://mmbiz.qpic.cn/mmbiz_png/uJDAUKrGC7L1vFQMnaRIJSmeZ58T2eZicjafiawQLp9u8wc4ic1Mjy6OyfibzfjVofeL5pnS1NSFKVjlIg6neI9ySg/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1)
+
+核心代码部分
+
+```java
+ public ConfigurableApplicationContext run(String... args) {
+        long startTime = System.nanoTime();
+        DefaultBootstrapContext bootstrapContext = this.createBootstrapContext();
+        ConfigurableApplicationContext context = null;
+        this.configureHeadlessProperty();
+        SpringApplicationRunListeners listeners = this.getRunListeners(args);
+        listeners.starting(bootstrapContext, this.mainApplicationClass);
+
+        try {
+            ApplicationArguments applicationArguments = new DefaultApplicationArguments(args);
+            ConfigurableEnvironment environment = this.prepareEnvironment(listeners, bootstrapContext, applicationArguments);
+            this.configureIgnoreBeanInfo(environment);
+            Banner printedBanner = this.printBanner(environment);
+            context = this.createApplicationContext();
+            context.setApplicationStartup(this.applicationStartup);
+            this.prepareContext(bootstrapContext, context, environment, listeners, applicationArguments, printedBanner);
+            this.refreshContext(context);
+            this.afterRefresh(context, applicationArguments);
+            Duration timeTakenToStartup = Duration.ofNanos(System.nanoTime() - startTime);
+            if (this.logStartupInfo) {
+                (new StartupInfoLogger(this.mainApplicationClass)).logStarted(this.getApplicationLog(), timeTakenToStartup);
+            }
+
+            listeners.started(context, timeTakenToStartup);
+            this.callRunners(context, applicationArguments);
+        } catch (Throwable var12) {
+            this.handleRunFailure(context, var12, listeners);
+            throw new IllegalStateException(var12);
+        }
+
+        try {
+            Duration timeTakenToReady = Duration.ofNanos(System.nanoTime() - startTime);
+            listeners.ready(context, timeTakenToReady);
+            return context;
+        } catch (Throwable var11) {
+            this.handleRunFailure(context, var11, (SpringApplicationRunListeners)null);
+            throw new IllegalStateException(var11);
+        }
+    }
+```
+
+## 6.yaml配置注入
+
+SpringBoot使用一个全局的配置文件 ， 配置文件名称是固定的
+
+- application.properties
+
+- - 语法结构 ：key=value
+
+- application.yaml
+
+- - 语法结构 ：key：空格 value
+
+- **配置文件的作用 ：**修改SpringBoot自动配置的默认值，因为SpringBoot在底层都给我们自动配置好了；
+
+- 例如：`server.port=8081`
+
+### 6.1 yaml概述
+
+YAML是 "YAML Ain't a Markup Language" （YAML不是一种标记语言）的递归缩写。在开发的这种语言时，YAML 的意思其实是："Yet Another Markup Language"（仍是一种标记语言）
+
+**这种语言以数据作为中心，而不是以标记语言为重点！**
+
+以前的配置文件，大多数都是使用xml来配置；比如一个简单的端口配置，我们来对比下yaml和xml
+
+传统xml配置：
+
+```xml
+<server>
+    <port>8081<port>
+</server>
+```
+
+yaml配置：
+
+```yaml
+server:
+  port: 8081(注意中间一定要有空格a)
+```
+
+### 6.2 基本语法
+
+说明：语法要求严格！
+
+* 1、空格不能省略
+
+* 2、以缩进来控制层级关系，只要是左边对齐的一列数据都是同一个层级的。
+
+* 3、属性和值的大小写都是十分敏感的。
+
+> 字面量：普通的值  [ 数字，布尔值，字符串  ]
+>
+> k: v
+
+注意：
+
+- “ ” 双引号，不会转义字符串里面的特殊字符 ， 特殊字符会作为本身想表示的意思；
+
+  比如 ：name: "kuang \n shen"  输出 ：kuang  换行  shen
+
+- '' 单引号，会转义特殊字符 ， 特殊字符最终会变成和普通字符一样输出
+
+  比如 ：name: ‘kuang \n shen’  输出 ：kuang  \n  shen
+
+#### 6.2.1 对象、Map（键值对)
+
+```text
+#对象、Map格式
+k: 
+    v1:
+```
+
+如
+
+```yaml
+student:
+    name: qinjiang
+    age: 3
+```
+
+其行内写法
+
+```yaml
+student: {name: qinjiang,age: 3}
+```
+
+#### 6.2.2 数组
+
+```yaml
+pets:
+  - cat
+  - dog
+  - snake
+  - pig
+
+pets1: [dog,cat,pig,snake]
+```
+
+#### 6.2.3 修改SpringBoot的默认端口号
+
+```yaml
+server:
+  port: 8081
+```
+
+### 6.3注入配置文件
+
+#### 6.3.1 原有的方法
+
+```java
+@Component  //注册bean到容器中
+public class Dog {
+    private String name;
+    private Integer age;
+    
+    //有参无参构造、get、set方法、toString()方法  
+}
+```
+
+加入注解@Vaulue后：
+
+```java
+@Component //注册bean
+public class Dog {
+    @Value("阿黄")
+    private String name;
+    @Value("18")
+    private Integer age;
+  ...
+}
+```
+
+在SpringBoot的测试类下注入狗狗输出一下；
+
+```java
+@SpringBootTest
+class DemoApplicationTests {
+
+    @Autowired //将狗狗自动注入进来
+    Dog dog;
+
+    @Test
+    public void contextLoads() {
+        System.out.println(dog); //打印看下狗狗对象
+    }
+
+}
+```
+
+运行测试：
+
+```text
+Dog{name='阿黄', age=18}
+```
+
+#### 6.3.2 yaml注入配置
+
+Person类文件
+
+```java
+
+@Component //注册bean到容器中
+@ConfigurationProperties(prefix = "person")
+public class Person {
+    private String name;
+    private Integer age;
+    private Boolean happy;
+    private Date birth;
+    private Map<String,Object> maps;
+    private List<Object> lists;
+    private Dog dog;
+  ...
+}
+```
+
+yaml配置文件
+
+```yaml
+person:
+  name: qinjiang
+  age: 3
+  happy: false
+  birth: 2000/01/01
+  maps: {k1: v1,k2: v2}
+  lists:
+    - code
+    - girl
+    - music
+  dog:
+    name: 旺财
+    age: 1
+```
+
+在测试文件添加配置
+
+```java
+@SpringBootTest
+class DemoApplicationTests {
+
+    @Autowired
+    Person person; //将person自动注入进来
+
+    @Test
+    public void contextLoads() {
+        System.out.println(person); //打印person信息
+    }
+
+}
+```
+
+运行结果
+
+```text
+Person{name='qinjiang', age=3, happy=false, birth=Sat Jan 01 00:00:00 CST 2000, maps={k1=v1, k2=v2}, lists=[code, girl, music], dog=Dog{name='旺财', age=1}}
+```
+
+#### 6.3.3 如何指定配置文件
+
+**@PropertySource ：**加载指定的配置文件；
+
+**@configurationProperties**：默认从全局配置文件中获取值；
+
+实例
+
+```java
+
+@PropertySource(value = "classpath:person.properties")
+@Component //注册bean
+public class Person {
+
+    @Value("${name}")
+    private String name;
+
+    ......  
+}
+```
+
+运行结果：
+
+```text
+Person{name='jiaoery', age=null, happy=null, birth=null, maps=null, lists=null, dog=null}
+```
+
+#### 6.3.4 使用占位符
+
+甚至部分元素可用占位符生成随机数
+
+```yaml
+person:
+    name: qinjiang${random.uuid} # 随机uuid
+    age: ${random.int}  # 随机int
+    happy: false
+    birth: 2000/01/01
+    maps: {k1: v1,k2: v2}
+    lists:
+      - code
+      - girl
+      - music
+    dog:
+      name: ${person.hello:other}_旺财
+      age: 1
+```
+
+运行结果
+
+```text
+Person{name='qinjiang2d991a32-8626-4455-b277-38a1ffce25d2', age=1576338666, happy=false, birth=Sat Jan 01 00:00:00 CST 2000, maps={k1=v1, k2=v2}, lists=[code, girl, music], dog=Dog{name='other_旺财', age=1}}
+```
+
+#### 6.3.5回顾properties配置
+
+【注意】properties配置文件在写中文的时候，会有乱码 ， 我们需要去IDEA中设置编码格式为UTF-8；
+
+settings-->FileEncodings 中配置；
+
+![image-20220402151246786](img/image-20220402151246786.png)
+
+除了yaml文件，其实properties文件也可实现对应的效果
+
+实例
+
+* 1.新建编辑配置文件 user.properties
+* 2.配置文件
+
+```properties
+user1.name=kuangshen
+user1.age=18
+user1.sex=男
+```
+
+* 3.我们在User类上使用@Value来进行注入
+
+```java
+@Component //注册bean
+@PropertySource(value = "classpath:user.properties")
+public class User {
+    //直接使用@value
+    @Value("${user.name}") //从配置文件中取值
+    private String name;
+    @Value("#{9*2}")  // #{SPEL} Spring表达式
+    private int age;
+    @Value("男")  // 字面量
+    private String sex;
+}
+```
+
+* 4.Springboot测试
+
+```java
+
+@SpringBootTest
+class DemoApplicationTests {
+
+    @Autowired
+    User user;
+
+    @Test
+    public void contextLoads() {
+        System.out.println(user);
+    }
+
+}
+```
+
+运行结果
+
+```text
+User{name='jixiang', age=18, sex='男'}
+```
+
+#### 6.3.6 对比@Value 和@ConfigurationProperties
+
+![图片](https://mmbiz.qpic.cn/mmbiz_png/uJDAUKrGC7KtjyIb9NEaYlz0tCWSiboOYjMibiaov73iaTsiaWEPoArDcAB1Ooibx9uR5JxtacIuicHblEtUI9SrySX2A/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1)
+
+* 1.@ConfigurationProperties只需要写一次即可 ， @Value则需要每个字段都添加
+* 2.松散绑定：这个什么意思呢? 比如我的yml中写的last-name，这个和lastName是一样的， - 后面跟着的字母默认是大写的。这就是松散绑定。可以测试一下
+* 3.JSR303数据校验 ， 这个就是我们可以在字段是增加一层过滤器验证 ， 可以保证数据的合法性
+* 4.复杂类型封装，yml中可以封装对象 ， 使用value就不支持
+
+
+
+**总结**
+
+* 配置yml和配置properties都可以获取到值 ， 强烈推荐 yml；
+
+* 如果我们在某个业务中，只需要获取配置文件中的某个值，可以使用一下 @value；
+
+* 如果说，我们专门编写了一个JavaBean来和配置文件进行一一映射，就直接@configurationProperties，不要犹豫！
+
+## 7.JSR303数据校验及多环境切换
+
+
+
+- 
+
+- 
