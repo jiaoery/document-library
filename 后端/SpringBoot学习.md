@@ -768,8 +768,285 @@ User{name='jixiang', age=18, sex='男'}
 
 ## 7.JSR303数据校验及多环境切换
 
+### 7.1 如何使用
 
+```java
+
+@Component //注册bean
+@ConfigurationProperties(prefix = "person")
+@Validated  //数据校验
+public class Person {
+
+    @Email(message="邮箱格式错误") //name必须是邮箱格式
+    private String name;
+}
+```
+
+**使用数据校验，可以保证数据的正确性；** 
+
+`Ps:前后端都需要做校验`
+
+### 7.2 常见参数
+
+```text
+@NotNull(message="名字不能为空")
+private String userName;
+@Max(value=120,message="年龄最大不能查过120")
+private int age;
+@Email(message="邮箱格式错误")
+private String email;
+
+空检查
+@Null       验证对象是否为null
+@NotNull    验证对象是否不为null, 无法查检长度为0的字符串
+@NotBlank   检查约束字符串是不是Null还有被Trim的长度是否大于0,只对字符串,且会去掉前后空格.
+@NotEmpty   检查约束元素是否为NULL或者是EMPTY.
+    
+Booelan检查
+@AssertTrue     验证 Boolean 对象是否为 true  
+@AssertFalse    验证 Boolean 对象是否为 false  
+    
+长度检查
+@Size(min=, max=) 验证对象（Array,Collection,Map,String）长度是否在给定的范围之内  
+@Length(min=, max=) string is between min and max included.
+
+日期检查
+@Past       验证 Date 和 Calendar 对象是否在当前时间之前  
+@Future     验证 Date 和 Calendar 对象是否在当前时间之后  
+@Pattern    验证 String 对象是否符合正则表达式的规则
+
+.......等等
+除此以外，我们还可以自定义一些数据校验规则
+```
+
+### 7.3 多环境切换
+
+profile是Spring对不同环境提供不同配置功能的支持，可以通过激活不同的环境版本，实现快速切换环境；
+
+#### 7.3.1 多配置文件(properties)
+
+我们在主配置文件编写的时候，文件名可以是 application-{profile}.properties/yml , 用来指定多个环境版本；
+
+**例如：**
+
+* application-test.properties 代表测试环境配置
+
+* application-dev.properties 代表开发环境配置
+
+但是Springboot并不会直接启动这些配置文件，它**默认使用application.properties主配置文件**；
+
+我们需要通过一个配置来选择需要激活的环境：
+
+```text
+
+#比如在配置文件中指定使用dev环境，我们可以通过设置不同的端口号进行测试；
+#我们启动SpringBoot，就可以看到已经切换到dev下的配置了；
+spring.profiles.active=dev
+```
+
+#### 7.3.2 多配置文件(yaml)
+
+和properties配置文件中一样，但是使用yml去实现不需要创建多个配置文件，更加方便了 !
+
+```yaml
+server:
+  port: 8081
+#选择要激活那个环境块
+spring:
+  profiles:
+    active: prod
+
+---
+server:
+  port: 8083
+spring:
+  profiles: dev #配置环境的名称
+
+
+---
+
+server:
+  port: 8084
+spring:
+  profiles: prod  #配置环境的名称
+```
+
+**注意：如果yml和properties同时都配置了端口，并且没有激活其他环境 ， 默认会使用properties配置文件的！**
+
+#### 7.3.3 配置文件加载位置
+
+[原文链接](https://docs.spring.io/spring-boot/docs/2.6.6/reference/htmlsingle/#features.external-config)
+
+![image-20220406174424274](img/image-20220406174424274.png)
 
 - 
 
-- 
+- springboot 启动会扫描以下位置的application.properties或者application.yml文件作为Spring boot的默认配置文件：
+
+- ```text
+  优先级1：项目路径下的config文件夹配置文件
+  优先级2：项目路径下配置文件
+  优先级3：资源路径下的config文件夹配置文件
+  优先级4：资源路径下配置文件
+  ```
+
+- **SpringBoot会从这四个位置全部加载主配置文件；互补配置；**
+
+- Ps:具体可以参考demo
+
+#### 7.3.4 拓展，运维小技巧
+
+我们还可以通过spring.config.location来改变默认的配置文件位置
+
+项目打包好以后，我们可以使用命令行参数的形式，启动项目的时候来指定配置文件的新位置；这种情况，一般是后期运维做的多，相同配置，外部指定的配置文件优先级最高
+
+```shell
+java -jar spring-boot-config.jar --spring.config.location=F:/application.properties
+```
+
+## 8.自动装配原理再理解
+
+### 8.1 分析自动配置原理
+
+以**HttpEncodingAutoConfiguration（Http编码自动配置）**为例解释自动配置原理；
+
+```java
+//表示这是一个配置类，和以前编写的配置文件一样，也可以给容器中添加组件；
+@Configuration 
+
+//启动指定类的ConfigurationProperties功能；
+  //进入这个HttpProperties查看，将配置文件中对应的值和HttpProperties绑定起来；
+  //并把HttpProperties加入到ioc容器中
+@EnableConfigurationProperties({HttpProperties.class}) 
+
+//Spring底层@Conditional注解
+  //根据不同的条件判断，如果满足指定的条件，整个配置类里面的配置就会生效；
+  //这里的意思就是判断当前应用是否是web应用，如果是，当前配置类生效
+@ConditionalOnWebApplication(
+    type = Type.SERVLET
+)
+
+//判断当前项目有没有这个类CharacterEncodingFilter；SpringMVC中进行乱码解决的过滤器；
+@ConditionalOnClass({CharacterEncodingFilter.class})
+
+//判断配置文件中是否存在某个配置：spring.http.encoding.enabled；
+  //如果不存在，判断也是成立的
+  //即使我们配置文件中不配置pring.http.encoding.enabled=true，也是默认生效的；
+@ConditionalOnProperty(
+    prefix = "spring.http.encoding",
+    value = {"enabled"},
+    matchIfMissing = true
+)
+
+public class HttpEncodingAutoConfiguration {
+    //他已经和SpringBoot的配置文件映射了
+    private final Encoding properties;
+    //只有一个有参构造器的情况下，参数的值就会从容器中拿
+    public HttpEncodingAutoConfiguration(HttpProperties properties) {
+        this.properties = properties.getEncoding();
+    }
+    
+    //给容器中添加一个组件，这个组件的某些值需要从properties中获取
+    @Bean
+    @ConditionalOnMissingBean //判断容器没有这个组件？
+    public CharacterEncodingFilter characterEncodingFilter() {
+        CharacterEncodingFilter filter = new OrderedCharacterEncodingFilter();
+        filter.setEncoding(this.properties.getCharset().name());
+        filter.setForceRequestEncoding(this.properties.shouldForce(org.springframework.boot.autoconfigure.http.HttpProperties.Encoding.Type.REQUEST));
+        filter.setForceResponseEncoding(this.properties.shouldForce(org.springframework.boot.autoconfigure.http.HttpProperties.Encoding.Type.RESPONSE));
+        return filter;
+    }
+    //。。。。。。。
+}
+```
+
+**一句话总结 ：根据当前不同的条件判断，决定这个配置类是否生效！**
+
+- 一但这个配置类生效；这个配置类就会给容器中添加各种组件；
+- 这些组件的属性是从对应的properties类中获取的，这些类里面的每一个属性又是和配置文件绑定的；
+- 所有在配置文件中能配置的属性都是在xxxxProperties类中封装着；
+- 配置文件能配置什么就可以参照某个功能对应的这个属性类
+
+```java
+@ConditionalOnProperty(
+    prefix = "server.servlet.encoding",
+    value = {"enabled"},
+    matchIfMissing = true
+)
+public class HttpEncodingAutoConfiguration {
+  	...
+}
+```
+
+![image-20220407183617964](img/image-20220407183617964.png)
+
+**这就是自动装配的原理！**
+
+### 8.2 精髓
+
+* 1、SpringBoot启动会加载大量的自动配置类
+
+* 2、我们看我们需要的功能有没有在SpringBoot默认写好的自动配置类当中；
+
+* 3、我们再来看这个自动配置类中到底配置了哪些组件；（只要我们要用的组件存在在其中，我们就不需要再手动配置了）
+
+* 4、给容器中自动配置类添加组件的时候，会从properties类中获取某些属性。我们只需要在配置文件中指定这些属性的值即可；
+
+**xxxxAutoConfigurartion：自动配置类；**给容器中添加组件
+
+**xxxxProperties:封装配置文件中相关属性；**
+
+### 8.3 了解：@Conditional
+
+**自动配置类必须在一定的条件下才能生效；**
+
+**@Conditional派生注解（Spring注解版原生的@Conditional作用）**
+
+作用：必须是@Conditional指定的条件成立，才给容器中添加组件，配置配里面的所有内容才生效；
+
+![图片](https://mmbiz.qpic.cn/mmbiz_png/uJDAUKrGC7IPEXZtUAUBhnSZvUmrPzbDGcJRvdK3PtqHPAWYBBmpe1XBVjQJeiatU4vasEaxckHlOga1BV9RPaw/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1)
+
+**那么多的自动配置类，必须在一定的条件下才能生效；也就是说，我们加载了这么多的配置类，但不是所有的都生效了。**
+
+**我们可以通过启用 debug=true属性；来让控制台打印自动配置报告，这样我们就可以很方便的知道哪些自动配置类生效；**
+
+```yaml
+#开启springboot的调试类
+debug=true
+```
+
+**Positive matches:（自动配置类启用的：正匹配）**
+
+**Negative matches:（没有启动，没有匹配成功的自动配置类：负匹配）**
+
+**Unconditional classes: （没有条件的类）**
+
+## 9.SpringBoot Web开发
+
+jar：webapp
+
+自动装配
+
+springboot配置了什么？
+
+* xxxxAutoConfigurartion：自动配置类；给容器中添加组件
+* xxxxProperties:封装配置文件中相关属性；
+
+**需要解决的问题：**
+
+* 导入静态资源
+* 首页
+* jsp，模版引擎Thymeleaf
+* 装配拓展SpringMvc
+* 增删改查
+* 拦截器
+* 国际化
+
+
+
+
+
+
+
+### 
+
