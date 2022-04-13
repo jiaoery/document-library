@@ -1042,11 +1042,411 @@ springboot配置了什么？
 * 拦截器
 * 国际化
 
+### 9.1 静态资源
+
+新建项目resource下的结构
+
+![img](https://img2020.cnblogs.com/blog/1728419/202004/1728419-20200412171412286-1389646992.png)
+
+* static存储静态变量，比如说，图片，文件等等
+* templates存储模版，比如html，jsp之类的
+
+#### 9.1.1 默认静态资源路径
+
+* classpath:/static,
+* classpath:/public,
+* classpath:/resources,
+* classpath:/META-INF/resources
+
+**classpath 在项目中就相当于src/main/resources文件夹.**
+
+#### 9.1.2 自定义静态资源路径
+
+```yaml
+spring:
+  web:
+    resources:
+      static-locations: classpath:templates/
+```
 
 
 
+我们配置了静态资源路径映射之后，**我们只能访问这个路径下面的资源**，也就是相当于自定义了静态资源路径，**就是说默认的静态资源路径都会失效。**
+
+### 9.2 首页和图标定制（没啥用了）
+
+## 10.thymeleaf模版引擎
+
+**Q：什么是模版引擎？**
+
+![图片](https://mmbiz.qpic.cn/mmbiz_png/uJDAUKrGC7Idia351qHgmH2vbzurk1Pp6V42bcomyzTYY0q6ic7AB8lvciaoicxyalNYQYZgslIrIjdXWLFNcOxUmQ/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1)
+
+Thymeleaf 官网：https://www.thymeleaf.org/
+
+Thymeleaf 在Github 的主页：https://github.com/thymeleaf/thymeleaf
+
+定义：Thymeleaf 是一款用于渲染 XML/XHTML/HTML5 内容的模板引擎。它与 JSP，Velocity，FreeMaker 等模板引擎类似，也可以轻易地与 Spring MVC 等 Web 框架集成。与其它模板引擎相比，Thymeleaf 最大的特点是，即使不启动 Web 应用，也可以直接在浏览器中打开并正确显示模板页面 。
+
+### 10.1 引入Thymeleaf
+
+maven引入依赖包
+
+```xml
+
+<!--thymeleaf-->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-thymeleaf</artifactId>
+</dependency>
+```
+
+maven下载的包
+
+![图片](https://mmbiz.qpic.cn/mmbiz_png/uJDAUKrGC7Idia351qHgmH2vbzurk1Pp6o4dAJHKh0872nmgaPYMaQDJ8KWfHJYWyoMXHW2pmVOtLVnREViaTziaw/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1)
+
+**注意：（版本有不同）**
+
+### 10.2 如何使用Thymeleaf
+
+项目结构
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/2020071410055766.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQwNjkzMTcx,size_1,color_FFFFFF,t_70)
+
+首先是controller
+
+```java
+package com.Thymeleaf.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+
+@Controller
+public class urlController {
+    @GetMapping("index")//页面的url地址
+    public String getindex(Model model)//对应函数
+    {
+        model.addAttribute("name","jiaoery");
+        return "index";//与templates中index.html对应
+    }
+}
+```
+
+上述代码就是一个完整的controller。部分含义如下：
+
+- **@controller** 注解的意思就是声明这个java文件为一个controller控制器。
+- **@GetMapping("index")** 其中@GetMapping的意思是请求的方式为get方式(即可通过浏览器直接请求)，而里面的index表示这个页面(接口)的url地址(路径)。即在浏览器对项目网页访问的地址。
+- **getindex()** 是@GetMapping("index")注解对应的函数，其类型为String类型返回一个字符串，参数Model类型即用来储存数据供我们Thymeleaf页面使用。
+- **model.addAttribute("name","bigsai")** 就是Model存入数据的书写方式，Model是一个特殊的类，相当于维护一个Map一样，而Model中的数据通过controller层的关联绑定在view层(即Thymeleaf中)可以直接使用。
+- **return "index"**：这个index就是在templates目录下对应模板(本次为Thymeleaf模板)的名称，即应该对应hello.html这个Thymeleaf文件(与页面关联默认规则为：templates目录下`返回字符串.html`)。
+
+其次是index.html中的网页数据
+
+```html
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>title</title>
+</head>
+<body>
+hello 第一个Thymeleaf程序
+<div th:text="${name}">name是jiaery(我是离线数据)</div>
+</body>
+</html>
+```
+
+运行结果：
+
+**不使用thymeleaf**
+
+![image-20220413163338548](img/image-20220413163338548.png)
+
+**使用thymeleaf**
+
+![image-20220413163423604](img/image-20220413163423604.png)
+
+基本到这里算入门了
+
+![嘿嘿](https://img-blog.csdnimg.cn/20200710142532159.png)
+
+### 10.3 Thymeleaf规则
+
+Thymeleaf 模板引擎具有以下特点：
+
+- 动静结合：Thymeleaf 既可以直接使用浏览器打开，查看页面的静态效果，也可以通过 Web 应用程序进行访问，查看动态页面效果。
+- 开箱即用：Thymeleaf 提供了 Spring 标准方言以及一个与 SpringMVC 完美集成的可选模块，可以快速的实现表单绑定、属性编辑器、国际化等功能。
+- 多方言支持：它提供了 Thymeleaf 标准和 Spring 标准两种方言，可以直接套用模板实现 JSTL、 OGNL 表达式；必要时，开发人员也可以扩展和创建自定义的方言。
+- 与 SpringBoot 完美整合：SpringBoot 为 Thymeleaf 提供了的默认配置，并且还为 T
+
+### 10.4 Thymeleaf 语法
+
+Springboot官方提供的配置内容有以下：
+
+```properties
+# THYMELEAF (ThymeleafAutoConfiguration)
+spring.thymeleaf.cache=true # Whether to enable template caching.
+spring.thymeleaf.check-template=true # Whether to check that the template exists before rendering it.
+spring.thymeleaf.check-template-location=true # Whether to check that the templates location exists.
+spring.thymeleaf.enabled=true # Whether to enable Thymeleaf view resolution for Web frameworks.
+spring.thymeleaf.enable-spring-el-compiler=false # Enable the SpringEL compiler in SpringEL expressions.
+spring.thymeleaf.encoding=UTF-8 # Template files encoding.
+spring.thymeleaf.excluded-view-names= # Comma-separated list of view names (patterns allowed) that should be excluded from resolution.
+spring.thymeleaf.mode=HTML # Template mode to be applied to templates. See also Thymeleaf's TemplateMode enum.
+spring.thymeleaf.prefix=classpath:/templates/ # Prefix that gets prepended to view names when building a URL.
+spring.thymeleaf.reactive.chunked-mode-view-names= # Comma-separated list of view names (patterns allowed) that should be the only ones executed in CHUNKED mode when a max chunk size is set.
+spring.thymeleaf.reactive.full-mode-view-names= # Comma-separated list of view names (patterns allowed) that should be executed in FULL mode even if a max chunk size is set.
+spring.thymeleaf.reactive.max-chunk-size=0 # Maximum size of data buffers used for writing to the response, in bytes.
+spring.thymeleaf.reactive.media-types= # Media types supported by the view technology.
+spring.thymeleaf.servlet.content-type=text/html # Content-Type value written to HTTP responses.
+spring.thymeleaf.suffix=.html # Suffix that gets appended to view names when building a URL.
+spring.thymeleaf.template-resolver-order= # Order of the template resolver in the chain.
+spring.thymeleaf.view-names= # Comma-separated list of view names (patterns allowed) that can be resolved.
+```
+
+上面的配置有些我们可能不常使用，因为Springboot官方做了默认配置大部分能够满足我们的使用需求，但如果你的项目有特殊需求也需要妥善使用这些配置
+
+**几个特别配置**
+
+比如`spring.thymeleaf.cache=false`是否允许页面缓存的配置，我们在开发时候要确保页面是最新的所以需要禁用缓存；而在上线运营时可能页面不常改动为了减少服务端压力以及提升客户端响应速度会允许页面缓存的使用。
+
+再比如在开发虽然我们大部分使用UTF-8多一些，我们可以使用`spring.thymeleaf.encoding=UTF-8`来确定页面的编码，但如果你的项目是GBK编码就需要将它改成GBK。
+
+另外Springboot默认模板引擎文件是放在templates目录下：`spring.thymeleaf.prefix=classpath:/templates/`,如果你有需求将模板引擎也可修改配置，将templates改为自己需要的目录。同理其他的配置如果需要自定义化也可参照上面配置进行修改。
+
+#### 10.4.1 标签
+
+常用的标签
+
+| 标签      | 作用               | 示例                                                         |
+| :-------- | :----------------- | :----------------------------------------------------------- |
+| th:id     | 替换id             | `<input th:id="${user.id}"/>`                                |
+| th:text   | 文本替换           | `<p text:="${user.name}">bigsai</p>`                         |
+| th:utext  | 支持html的文本替换 | `<p utext:="${htmlcontent}">content</p>`                     |
+| th:object | 替换对象           | `<div th:object="${user}"></div>`                            |
+| th:value  | 替换值             | `<input th:value="${user.name}" >`                           |
+| th:each   | 迭代               | `<tr th:each="student:${user}" >`                            |
+| th:href   | 替换超链接         | `<a th:href="@{index.html}">超链接</a>`                      |
+| th:src    | 替换资源           | `<script type="text/javascript" th:src="@{index.js}"></script>` |
+
+#### 10.4.2 链式表达@{…}
 
 
 
-### 
+上面我们已经学习到Thymeleaf是一个基于html的模板引擎，但是我们还是需要加入特定标签来声明和使用Thymeleaf的语法。我们需要在Thymeleaf的头部加Thymeleaf标识：
 
+```html
+<html xmlns:th="http://www.thymeleaf.org">
+```
+
+在Thymeleaf 中，如果想引入链接比如link，href，src，需要使用`@{资源地址}`引入资源。其中资源地址可以static目录下的静态资源，也可以是互联网中的绝对资源。
+
+**引入css**
+
+```html
+ <link rel="stylesheet" th:href="@{index.css}">
+```
+
+**引入JavaScript：**
+
+```html
+ <script type="text/javascript" th:src="@{index.js}"></script>
+```
+
+**超链接：**
+
+```html
+<a th:href="@{index.html}">超链接</a>
+```
+
+最终效果
+
+![image-20220413164852343](img/image-20220413164852343.png)
+
+#### 10.4.3 变量表达式: ${...}
+
+在Thymeleaf中可以通过${…}进行取值，这点和ONGL表达式语法一致。
+
+首先引入一个bean类Child
+
+```java
+public class Child {
+    private String name;
+    private  int age;
+    private  String detail;
+
+    public Child(String name, int age, String detail) {
+        this.name = name;
+        this.age = age;
+        this.detail = detail;
+    }
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public int getAge() {
+        return age;
+    }
+    public void setAge(int age) {
+        this.age = age;
+    }
+    public String getDetail() {
+        return detail;
+    }
+    public void setDetail(String detail) {
+        this.detail = detail;
+    }
+}
+```
+
+然后在Model中添加一些数据
+
+```java
+@GetMapping("index")
+public String getIndex(Model model){
+    Child user1=new Child("bigsai",22,"一个幽默且热爱java的社会青年");
+    List<String> userList=new ArrayList<>();
+    userList.add("zhang san 66");
+    userList.add("li si 66");
+    userList.add("wang wu 66");
+    Map<String ,String> map=new HashMap<>();
+    map.put("place","cloudwalk");
+    map.put("feeling","very well");
+    //数据添加到model中
+    model.addAttribute("name","jiaoery");//普通字符串
+    model.addAttribute("user",user1);//储存javabean
+    model.addAttribute("userlist",userList);//储存List
+    model.addAttribute("map",map);//储存Map
+    model.addAttribute("name","jiaoery");
+    return "index";//与templates中index.html对应
+}
+```
+
+然后在index.html文件下使用数据
+
+```html
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>title</title>
+    <link rel="stylesheet" th:href="@{index.css}">
+    <script type="text/javascript" th:src="@{index.js}"></script>
+</head>
+<body>
+hello 第一个Thymeleaf程序
+<div th:text="${name}">name是jiaoery(我是离线数据)</div>
+<a th:href="@{index.html}">超链接</a>
+<h2>普通字符串</h2>
+<table border="0">
+    <tr>
+        <td th:text="'我的名字是：'+${name}"></td>
+    </tr>
+</table>
+
+<h2>JavaBean对象</h2>
+<table bgcolor="#ffe4c4" border="1">
+    <tr>
+        <td>介绍</td>
+        <td th:text="${user.name}"></td>
+    </tr>
+    <tr>
+        <td>年龄</td>
+        <td th:text="${user['age']}"></td>
+    </tr>
+    <tr>
+        <td>介绍</td>
+        <td th:text="${user.getDetail()}"></td>
+    </tr>
+</table>
+
+<h2>List取值</h2>
+<table bgcolor="#ffe4c4" border="1">
+    <tr th:each="item:${userlist}">
+        <td th:text="${item}"></td>
+    </tr>
+</table>
+
+<h2>Map取值</h2>
+<table bgcolor="#8fbc8f" border="1">
+    <tr>
+        <td>place:</td>
+        <td th:text="${map.get('place')}"></td>
+    </tr>
+    <tr>
+        <td>feeling:</td>
+        <td th:text="${map['feeling']}"></td>
+    </tr>
+</table>
+
+<h2>Map遍历</h2>
+<table bgcolor="#ffe4c4" border="1">
+    <tr th:each="item:${map}">
+        <td th:text="${item.key}"></td>
+        <td th:text="${item.value}"></td>
+    </tr>
+</table>
+
+</body>
+</html>
+```
+
+运行结果
+
+![image-20220413175749968](img/image-20220413175749968.png)
+
+#### 10.4.4 选择变量表达式: *{...}
+
+变量表达式不仅可以写成${...}，而且还可以写成*{...}。`（可以理解为两者相等）`
+
+#### 10.4.5 消息表达: #{...}
+
+这里是使用配置参数的方式实现，如yaml或propriety文件配置；通俗易懂的来说`#{…}`语法就是用来**读取配置文件中数据**的。在Thymeleaf你可以使用`#{...}`语法获取消息，
+
+首先在templates目录下建立`home.properties`中写入以下内容：
+
+```properties
+jiaoery.name=jiaoery
+jiaoery.age=22
+province=chongqing
+```
+
+在`application.properties`中加入以下内容：
+
+```properties
+spring.messages.basename=templates/home
+```
+
+或者使用yaml文件下添加**(注意是三行，也注意空格)**
+
+```yaml
+ 
+ messages:
+   basename: templates/home
+```
+
+然后H5中添加对应的配置文件
+
+```html
+<h2>消息表达</h2>
+<table bgcolor="#ffe4c4" border="1">
+    <tr>
+    <td>name</td>
+    <td th:text="#{bigsai.name}"></td>
+    </tr>
+    <tr>
+    <td>年龄</td>
+    <td th:text="#{bigsai.age}"></td>
+    </tr>
+    <tr>
+    <td>province</td>
+    <td th:text="#{province}"></td>
+    </tr>
+</table>
+```
+
+最终结果
+
+![image-20220413182439496](img/image-20220413182439496.png)
