@@ -32,16 +32,25 @@ I'm glad to see you ,my ![Visitor Count](https://profile-counter.glitch.me/jiaoe
 ![](https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite&logoColor=white)
 ![](https://img.shields.io/badge/GIT-E44C30?style=for-the-badge&logo=git&logoColor=white)
 
+Let me introduce myself:
+
+![Metrics](https://metrics.lecoq.io/jiaoery?template=classic&config.timezone=Asia%2FShanghai)
+
+## ✍ recent activities
+[![Ashutosh's github activity graph](https://activity-graph.herokuapp.com/graph?username=jiaoery&theme=dracula)](https://github.com/ashutosh00710/github-readme-activity-graph)
+
 ## 🌠[Coding Time](https://wakatime.com/@jiaoery)
 > the projects I'm working on
 
 <!-- ![My stats](https://github-readme-stats.vercel.app/api?username=younger-1&theme=calm&show_icons=true) -->
 <!-- ![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=younger-1&hide=html,css,Jupyter+Notebook,ruby,javascript&theme=calm&langs_count=6) -->
-
+![myskyline](skyline.gif)
 <div>
     <img height="165" align="left" src="https://github-readme-stats.vercel.app/api?username=jiaoery&theme=calm&show_icons=true" />
     <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=jiaoery&hide=html,css,Jupyter+Notebook,ruby,javascript&theme=calm&langs_count=6&layout=compact" />
 </div>
+
+<img src="https://github-readme-streak-stats.herokuapp.com?user=jiaoery&theme=jolly" width="700">
 
 ## 🏆 Github Profile Trophy
 <img src="https://github-profile-trophy.vercel.app/?username=jiaoery&column=8"/>
