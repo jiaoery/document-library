@@ -1300,3 +1300,111 @@ mysql> select
 
 也叫多行处理函数，多个输入对应一个输出
 
+* count计数
+* sum求和
+* avg平均值
+* max最大值
+* min最小值
+
+**注意：分组函数在使用的时候必须先进行分组，然后才能使用。如果没有对数据进行分组，整张表默认为一组。**
+
+```mysql
+mysql> select job,sum(sal) from emp group by job;
++-----------+----------+
+| job       | sum(sal) |
++-----------+----------+
+| CLERK     |  4150.00 |
+| SALESMAN  |  5600.00 |
+| MANAGER   |  8275.00 |
+| ANALYST   |  6000.00 |
+| PRESIDENT |  5000.00 |
++-----------+----------+
+5 rows in set (0.00 sec)
+```
+
+分组函数的注意事项：
+
+* 1，分组函数自动忽略null
+* 2.**分组函数中`count(*)`和`count(具体字段)`有什么区别？**
+  * count(具体字段)：表示统计该字段下所有不为null的元素的总数
+  * count(*)：统计表当中的总行数。只要有一行数据count则++。
+* 3.**分组函数不能直接使用在where子句中**
+
+`select ename,sal from emp where sal > min(sal);` 错误写法（需要使用having）
+
+* 4.**所有的分组函数可以组合起来一起用。**
+
+> select sum(sal),min(sal),max(sal),avg(sal),count(*) from emp;
+
+## 9.连接查询
+
+* Q:什么是连接查询？
+  * 从一张表中单独查询，称为单表查询。
+    emp表和dept表联合起来查询数据，从emp表中取员工名字，从dept中取部门名字。这种跨表查询，多张表联合起来查询数据，称为连接查询。
+* 连接查询的分类
+  * 1.根据语法的年代分类：
+    * SQL92：1992年的时候出现的语法
+    * SQL99：1999年的时候出现的语法
+      **我们重点学习SQL99。**
+  * 2.根据表的连接方式分类：
+    * **内连接**：等值连接、非等值连接、自连接
+    * **外连接**：左外连接、右外连接
+    * **全连接（略）**
+
+### 9.1 笛卡尔积现象
+
+当两张表进行连接查询，没有任何条件限制的时候，最终查询结果条数，是两张表条数的乘积，这种现象被称为笛卡尔积现象。（笛卡尔积发现的，这是一个数学现象。）
+
+两张表连接没有任何条件限制：`select ename,dname from emp,dept;` ename的一条记录会去匹配dname的所有记录。
+
+Q:如何避免笛卡尔积呢？
+
+A：连接的时候添加条件，满足这个条件的记录被筛选出来！
+
+```mysql
+mysql> select ename, dname from emp,dept where emp.deptno = dept.deptno;
++--------+------------+
+| ename  | dname      |
++--------+------------+
+| SMITH  | RESEARCH   |
+| ALLEN  | SALES      |
+| WARD   | SALES      |
+| JONES  | RESEARCH   |
+| MARTIN | SALES      |
+| BLAKE  | SALES      |
+| CLARK  | ACCOUNTING |
+| SCOTT  | RESEARCH   |
+| KING   | ACCOUNTING |
+| TURNER | SALES      |
+| ADAMS  | RESEARCH   |
+| JAMES  | SALES      |
+| FORD   | RESEARCH   |
+| MILLER | ACCOUNTING |
++--------+------------+
+14 rows in set (0.00 sec)
+
+## 也可使用别名
+mysql> select e.ename, d.dname from emp e, dept d where e.deptno = d.deptno;
++--------+------------+
+| ename  | dname      |
++--------+------------+
+| SMITH  | RESEARCH   |
+| ALLEN  | SALES      |
+| WARD   | SALES      |
+| JONES  | RESEARCH   |
+| MARTIN | SALES      |
+| BLAKE  | SALES      |
+| CLARK  | ACCOUNTING |
+| SCOTT  | RESEARCH   |
+| KING   | ACCOUNTING |
+| TURNER | SALES      |
+| ADAMS  | RESEARCH   |
+| JAMES  | SALES      |
+| FORD   | RESEARCH   |
+| MILLER | ACCOUNTING |
++--------+------------+
+14 rows in set (0.00 sec)
+```
+
+### 9.2 内连接
+
