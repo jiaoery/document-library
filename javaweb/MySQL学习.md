@@ -984,6 +984,50 @@ mysql> select deptno,avg(sal) from emp group by deptno having avg(sal)>2500;
 
 执行顺序：1. from 2. where 3. group by 4. having 5. select 6. order by
 
+### 7.6 查询结果去重
+
+查询结果去重复记录：distinct
+
+原表的数据不会被修改，但是查询结果会去重
+
+```mysql
+# 会存在重复数据
+mysql> select job from emp;
++-----------+
+| job       |
++-----------+
+| CLERK     |
+| SALESMAN  |
+| SALESMAN  |
+| MANAGER   |
+| SALESMAN  |
+| MANAGER   |
+| MANAGER   |
+| ANALYST   |
+| PRESIDENT |
+| SALESMAN  |
+| CLERK     |
+| CLERK     |
+| ANALYST   |
+| CLERK     |
++-----------+
+14 rows in set (0.00 sec)
+## 去重
+mysql> select distinct job from emp;
++-----------+
+| job       |
++-----------+
+| CLERK     |
+| SALESMAN  |
+| MANAGER   |
+| ANALYST   |
+| PRESIDENT |
++-----------+
+5 rows in set (0.00 sec)
+```
+
+
+
 ## 8.函数
 
 ### 8.1 单行处理函数
@@ -1349,7 +1393,7 @@ mysql> select job,sum(sal) from emp group by job;
   * 2.根据表的连接方式分类：
     * **内连接**：等值连接、非等值连接、自连接
     * **外连接**：左外连接、右外连接
-    * **全连接（略）**
+    * **全连接（略不讲）**
 
 ### 9.1 笛卡尔积现象
 
@@ -1407,4 +1451,297 @@ mysql> select e.ename, d.dname from emp e, dept d where e.deptno = d.deptno;
 ```
 
 ### 9.2 内连接
+
+#### 9.2.1等值查询
+
+查询每个员工所在部门名称，显示员工名和部门名：
+
+```mysql
+SQL92语法：
+select 
+	e.ename,d.dname
+from
+	emp e, dept d
+where
+	e.deptno = d.deptno;
+
+```
+
+**SQL92缺点**：结构不清晰，表的连接条件，和后期进一步筛选的条件，都放在where后面。
+
+```mysql
+SQL99语法：
+select
+	e.ename, d.dname
+from
+	emp e
+join
+	dept d
+on
+	e.deptno = d.deptno;
+```
+
+**SQL99优点**：表连接的条件是独立的，连接之后，如果还需要进一步筛选，再往后继续添加where。
+
+```mysql
+select
+	...
+from
+	a
+inner join  //inner可以省略，带着inner可读性更好
+	b
+on
+	a和b的连接条件
+where
+	筛选条件
+```
+
+因为a和b的**连接条件是等量关系**，所以被称为**等值连接**。
+
+#### 9.2.2 非等值连接
+
+找出每个员工的薪资等级，要求显示员工名、薪资、薪资等级：
+
+> mysql> select * from emp;
+> mysql> select * from salgrade;
+
+格式
+
+```mydql
+select 
+	e.ename, e.sal, s.grade 
+from 
+	emp e 
+join 
+	salgrade s 
+on 
+	e.sal between s.losal and s.hisal;
+```
+
+
+
+```mysql
+mysql> select e.ename,e.sal,s.grade from emp e join salgrade s on e.sal between s.losal and hisal;
++--------+---------+-------+
+| ename  | sal     | grade |
++--------+---------+-------+
+| SMITH  |  800.00 |     1 |
+| ALLEN  | 1600.00 |     3 |
+| WARD   | 1250.00 |     2 |
+| JONES  | 2975.00 |     4 |
+| MARTIN | 1250.00 |     2 |
+| BLAKE  | 2850.00 |     4 |
+| CLARK  | 2450.00 |     4 |
+| SCOTT  | 3000.00 |     4 |
+| KING   | 5000.00 |     5 |
+| TURNER | 1500.00 |     3 |
+| ADAMS  | 1100.00 |     1 |
+| JAMES  |  950.00 |     1 |
+| FORD   | 3000.00 |     4 |
+| MILLER | 1300.00 |     2 |
++--------+---------+-------+
+14 rows in set (0.00 sec)
+```
+
+条件不是一个等量关系，所以称为非等值连接。
+
+#### 9.2.3 自连接
+
+查询员工的上级领导，要求显示员工名和对应的领导名：
+
+```mysql
+mysql> select empno,ename,mgr from emp;
++-------+--------+------+
+| empno | ename  | mgr  |
++-------+--------+------+
+|  7369 | SMITH  | 7902 |
+|  7499 | ALLEN  | 7698 |
+|  7521 | WARD   | 7698 |
+|  7566 | JONES  | 7839 |
+|  7654 | MARTIN | 7698 |
+|  7698 | BLAKE  | 7839 |
+|  7782 | CLARK  | 7839 |
+|  7788 | SCOTT  | 7566 |
+|  7839 | KING   | NULL |
+|  7844 | TURNER | 7698 |
+|  7876 | ADAMS  | 7788 |
+|  7900 | JAMES  | 7698 |
+|  7902 | FORD   | 7566 |
+|  7934 | MILLER | 7782 |
++-------+--------+------+
+14 rows in set (0.00 sec)
+
+mysql> select a.ename as '员工名' ,b.ename as '领导名'
+    -> from emp a
+    -> join emp b
+    -> on a.mgr = b.empno;
++--------+--------+
+| 员工名 | 领导名 |
++--------+--------+
+| SMITH  | FORD   |
+| ALLEN  | BLAKE  |
+| WARD   | BLAKE  |
+| JONES  | KING   |
+| MARTIN | BLAKE  |
+| BLAKE  | KING   |
+| CLARK  | KING   |
+| SCOTT  | JONES  |
+| TURNER | BLAKE  |
+| ADAMS  | SCOTT  |
+| JAMES  | BLAKE  |
+| FORD   | JONES  |
+| MILLER | CLARK  |
++--------+--------+
+```
+
+**自连接技巧：一张表看成两张表**，a表的mgr就是b表的empno
+
+### 9.3 外连接
+
+语法结构
+
+```mysql
+mysql> select
+    -> e.ename,d.dname
+    -> from
+    -> emp e
+    -> right join
+    -> dept d
+    -> on
+    -> e.deptno = d.deptno;
++--------+------------+
+| ename  | dname      |
++--------+------------+
+| MILLER | ACCOUNTING |
+| KING   | ACCOUNTING |
+| CLARK  | ACCOUNTING |
+| FORD   | RESEARCH   |
+| ADAMS  | RESEARCH   |
+| SCOTT  | RESEARCH   |
+| JONES  | RESEARCH   |
+| SMITH  | RESEARCH   |
+| JAMES  | SALES      |
+| TURNER | SALES      |
+| BLAKE  | SALES      |
+| MARTIN | SALES      |
+| WARD   | SALES      |
+| ALLEN  | SALES      |
+| NULL   | OPERATIONS |
++--------+------------+
+15 rows in set (0.02 sec)
+
+```
+
+**right代表**：将join关键字右边的这张表看成主表，主要是为了将这张表的数据全部查询出来，捎带着关联查询左边的表。在外连接当中，两张表连接，产生了主次关系。
+
+带有right的是右外连接，带有left的是左外连接；写法可以互换。
+
+**结论：外连接的查询结果条数一定是 >= 内连接的查询结果条数。**
+
+example:查询每个员工的上级领导，要求显示所有员工和名字和领导名。
+
+```mysql
+mysql> select a.ename as '员工名',b.ename as '领导名' from emp a left join emp b on a.mgr = b.empno;
++--------+--------+
+| 员工名 | 领导名 |
++--------+--------+
+| SMITH  | FORD   |
+| ALLEN  | BLAKE  |
+| WARD   | BLAKE  |
+| JONES  | KING   |
+| MARTIN | BLAKE  |
+| BLAKE  | KING   |
+| CLARK  | KING   |
+| SCOTT  | JONES  |
+| KING   | NULL   |
+| TURNER | BLAKE  |
+| ADAMS  | SCOTT  |
+| JAMES  | BLAKE  |
+| FORD   | JONES  |
+| MILLER | CLARK  |
++--------+--------+
+14 rows in set (0.00 sec)
+```
+
+### 9.4 多表连接
+
+语法：
+
+```mysql
+select
+	...
+from
+	a
+join 
+	b
+on
+	a和b的连接条件
+join
+	c
+on
+	a和c的连接条件
+join
+	d
+on
+	a和d的连接条件
+
+```
+
+一条SQL中内连接和外连接可以混合，都可以出现。
+
+**案例：找出每个员工的部门名称以及工资等级，还有上级领导，要求显示员工名、领导名、部门名、薪资、薪资等级。**
+
+```mysql
+mysql> select
+    -> e.ename,d.dname,e.sal,s.grade
+    -> from
+    -> emp e
+    -> join
+    -> dept d
+    -> on
+    -> e.deptno = d.deptno
+    -> join
+    -> salgrade s
+    -> on
+    ->  e.sal between s.losal and s.hisal
+    -> left join
+    -> emp l
+    -> on
+    -> e.mgr = l.empno;
++--------+------------+---------+-------+
+| ename  | dname      | sal     | grade |
++--------+------------+---------+-------+
+| SMITH  | RESEARCH   |  800.00 |     1 |
+| ALLEN  | SALES      | 1600.00 |     3 |
+| WARD   | SALES      | 1250.00 |     2 |
+| JONES  | RESEARCH   | 2975.00 |     4 |
+| MARTIN | SALES      | 1250.00 |     2 |
+| BLAKE  | SALES      | 2850.00 |     4 |
+| CLARK  | ACCOUNTING | 2450.00 |     4 |
+| SCOTT  | RESEARCH   | 3000.00 |     4 |
+| KING   | ACCOUNTING | 5000.00 |     5 |
+| TURNER | SALES      | 1500.00 |     3 |
+| ADAMS  | RESEARCH   | 1100.00 |     1 |
+| JAMES  | SALES      |  950.00 |     1 |
+| FORD   | RESEARCH   | 3000.00 |     4 |
+| MILLER | ACCOUNTING | 1300.00 |     2 |
++--------+------------+---------+-------+
+14 rows in set (0.00 sec)
+```
+
+### 9.5 子查询
+
+select语句中嵌套select语句，被嵌套的select语句称为子查询。
+
+语法结构如下：
+
+```mysql
+select
+	..(select).
+from
+	..(select).
+where
+	..(select).
+
+```
 
