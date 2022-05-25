@@ -1,5 +1,7 @@
 # MySQl(老杜)
 
+视频资源：https://www.bilibili.com/video/BV1Vy4y1z7EX?p=37&spm_id_from=pageDriver
+
 ## 1.初识MySQL
 
 Q：什么是数据库？什么是数据库管理系统？什么是SQL？
@@ -10,7 +12,7 @@ Q：什么是数据库？什么是数据库管理系统？什么是SQL？
 * 数据库管理
   * DataBaseManagement:简称DMBMS
   * 数据库管理系统术专门用来管理数据库汇总的数据的，数据库管理系统可以对数据库中的数据进行增删改查
-  * 常见的数据库管理系统：Mysql、Orcle、Ms SqlServer、DB2等
+  * 常见的数据库管理系统：Mysql、：、Ms SqlServer、DB2等
 * SQL:结构化查询语言
   * 程序员需要学习SQL语句，实现增删改查
 
@@ -1745,3 +1747,1379 @@ where
 
 ```
 
+案例；
+
+* where子句中的子查询
+
+example：**找出比最低工资高的员工姓名和工资**
+
+实现思路：
+
+第一步：查询最低工资是多少
+
+> select min(sal) from emp;
+
+第二步：找出>800的
+
+> select ename,sal from emp where sal > 800;
+
+第三步：合并
+
+> select ename,sal from emp where sal > (select min(sal) from emp);
+
+* from子句中的子查询
+
+**注意：from后面的子查询，可以将子查询的查询结果当做一张临时表。**
+
+案例：找出每个岗位的平均工资的薪资等级。
+
+第一步：找出每个岗位的平均工资（按照岗位分组求平均值）
+
+> select job,avg(sal) from emp group by job;
+
+第二步：把以上的查询结果就当做一张真实存在的表t
+
+> select * from salgrade; s表
+
+第三步：t表和s表进行表连接
+
+```mysql
+mysql> select
+    -> t.*, s.grade
+    -> from
+    -> (select job,avg(sal) as avgsal from emp group by job) t  
+    -> join
+    -> salgrade s
+    -> on
+    -> t.avgsal between s.losal and s.hisal; 
++-----------+-------------+-------+
+| job       | avgsal      | grade |
++-----------+-------------+-------+
+| CLERK     | 1037.500000 |     1 |
+| SALESMAN  | 1400.000000 |     2 |
+| MANAGER   | 2758.333333 |     4 |
+| ANALYST   | 3000.000000 |     4 |
+| PRESIDENT | 5000.000000 |     5 |
++-----------+-------------+-------+
+5 rows in set (0.00 sec)
+
+```
+
+* select 子句中的子查询
+
+### 9.6 Union合并查询结果集
+
+案例：查询工作岗位是MANAGER和SALESMAN的员工：
+
+>select ename,job from emp where job = 'MANAGER' or job = 'SALESMAN';
+>
+>select ename,job from emp where job in('MANAGER', 'SALESMAN');
+
+以上两种查询语句都是正确的，但是这也可以使用union来实现相同的效果
+
+>select ename, job from emp where job = 'MANAGER'
+>union
+>select ename, job from emp where job = 'SALESMAN';
+
+**union的效率更高**。对于表连接来说，每连接一次新表，则匹配的次数满足笛卡尔积，成倍的翻。
+但是union可以减少匹配的次数。在减少匹配次数的情况下，还可以完成两个结果集的拼接。
+
+
+
+**举个例子：**
+a连接b连接c，a、b、c各10条记录，
+匹配次数是：1000
+使用union：a连接b：10`*`10 -->100条记录，a连接c：10`*`10 -->100条记录。
+匹配次数：100 + 100 = 200次。(做到了优化效率)
+
+
+
+**union在使用的时候注意事项**：
+
+* 1.进行结果集合并的时候，要求两个结果集的列数相同。
+* 2.结果集合并时列和列的数据类型要相同。
+
+### 9.7 limit 限制数量
+
+作用：将查询结果集的一部分取出来。通常使用在分页查询当中。分页的作用是为了提高用户的体验，不用一次查询全部。
+
+**使用**：`limit startIndex, length`
+startIndex是起始下标，从0开始；length是长度
+
+例子：
+
+* 1.按照薪资降序，取出排名在前5名的员工：
+
+```mysql
+select
+	ename, sal
+from
+	emp
+order by
+	sal desc
+limit 5; //取前五
+
+# 效果
+mysql> select
+    -> ename, sal
+    -> from
+    -> emp
+    -> order by
+    -> sal desc
+    -> limit 5; //取前五
++-------+---------+
+| ename | sal     |
++-------+---------+
+| KING  | 5000.00 |
+| SCOTT | 3000.00 |
+| FORD  | 3000.00 |
+| JONES | 2975.00 |
+| BLAKE | 2850.00 |
++-------+---------+
+5 rows in set (0.01 sec)
+```
+
+**注意：mysql当中limit在order by之后执行！**
+
+* 2.取出工资排名在[3-5]名的员工：
+
+```mysql
+select
+	ename, sal
+from
+	emp
+order by
+	sal desc
+limit
+	2, 3; //2代表起始位置从下标2开始，3就是三条记录 [3-5]
+
+# 效果
+mysql> select
+    -> ename, sal
+    -> from
+    -> emp
+    -> order by
+    -> sal desc
+    -> limit
+    -> 2, 3;
++-------+---------+
+| ename | sal     |
++-------+---------+
+| FORD  | 3000.00 |
+| JONES | 2975.00 |
+| BLAKE | 2850.00 |
++-------+---------+
+3 rows in set (0.00 sec)
+```
+
+## 10.DDL语句
+
+### 10.1 建表
+
+```mysql
+create table 表名 (
+	字段名1 数据类型,
+	字段名2 数据类型,
+	字段名3 数据类型
+);
+```
+
+**表名：建议以 t_或者tbl_开始，可读性强。**
+
+* mysql中常见的数据类型有：
+
+  * varchar（最长255）：可变长度的字符串。比较智能，会根据实际的数据长度动态分配空间。
+
+  * char（最长255）：定长字符串。不管实际的数据长度是多少，分配固定长度的空间去存储数据，使用不恰当会导致空间的浪费。
+
+    > 优点：不需要动态分配空间，速度快。
+    > 缺点：使用不当会导致空间的浪费。
+
+  * int（最长11）
+  * bigint
+  * float
+  * double
+  * date：短日期
+  * datetime：长日期
+  * clob：字符大对象，最多可以存储4G的字符串。比如：存储一篇文章。超过255个字符的都要采用clob来存储。
+  * blob：二进制大对象。专门用来存储图片、声音、视频等流媒体数据。往blog类型字段上插入数据的时候，需要使用IO流。
+
+例子：
+
+* 创建一个学生表
+
+```mysql
+create table t_student (
+	no int,
+	name varchar(32),
+	sex char(1) default 'm', //可以指定默认值
+	age int(3),
+	email varchar(255)
+);
+
+# 实例
+mysql> create table t_student( no int, name varchar(32), sex char(1) default 'm', age int(3), emal varchar(255) );
+Query OK, 0 rows affected, 1 warning (0.01 sec)
+
+mysql> desc t_student;
++-------+--------------+------+-----+---------+-------+
+| Field | Type         | Null | Key | Default | Extra |
++-------+--------------+------+-----+---------+-------+
+| no    | int          | YES  |     | NULL    |       |
+| name  | varchar(32)  | YES  |     | NULL    |       |
+| sex   | char(1)      | YES  |     | m       |       |
+| age   | int          | YES  |     | NULL    |       |
+| emal  | varchar(255) | YES  |     | NULL    |       |
++-------+--------------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+```
+
+* 创建一个用户vip表；
+
+```mysql
+CREATE TABLE IF NOT EXISTS user_info_vip (
+    id int(11) PRIMARY KEY AUTO_INCREMENT NOT NULL COMMENT '自增ID',
+    uid int unique NOT NULL COMMENT '用户ID',
+    nick_name varchar(64)  COMMENT '昵称',
+    achievement int(11)  default 0 COMMENT '成就值',
+    level int(11) COMMENT '用户等级',
+    job varchar(32)  COMMENT '职业方向',
+    register_time datetime default CURRENT_TIMESTAMP COMMENT '注册时间'
+)CHARACTER SET utf8 COLLATE utf8_general_ci;
+
+# 实例
+mysql> CREATE TABLE IF NOT EXISTS user_info_vip (     id int(11) PRIMARY KEY AUTO_INCREMENT NOT NULL COMMENT '自增ID',     uid int unique NOT NULL COMMENT '用户ID',     nick_name varchar(64)  COMMENT '昵称',     achievement int(11)  default 0 COMMENT '成就值',     level int(11) COMMENT '用户等级',     job varchar(32)
+COMMENT '职业方向',     register_time datetime default CURRENT_TIMESTAMP COMMENT '注册时间' )CHARACTER SET utf8 COLLATE utf8_general_ci;
+Query OK, 0 rows affected, 5 warnings (0.01 sec)
+
+mysql> desc user_info_vip;
++---------------+-------------+------+-----+-------------------+-------------------+
+| Field         | Type        | Null | Key | Default           | Extra             |
++---------------+-------------+------+-----+-------------------+-------------------+
+| id            | int         | NO   | PRI | NULL              | auto_increment    |
+| uid           | int         | NO   | UNI | NULL              |                   |
+| nick_name     | varchar(64) | YES  |     | NULL              |                   |
+| achievement   | int         | YES  |     | 0                 |                   |
+| level         | int         | YES  |     | NULL              |                   |
+| job           | varchar(32) | YES  |     | NULL              |                   |
+| register_time | datetime    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED |
++---------------+-------------+------+-----+-------------------+-------------------+
+7 rows in set (0.00 sec)
+```
+
+### 10.2 删除表
+
+> 删除表：drop table if exists t_student;
+
+### 10.3 快速建表
+
+> create table emp2 as select * from emp;
+
+原理：将一个查询结果当做一张表新建，相当于复制了这张表。表创建出来，同时表中的数据也存在了。
+
+> create table mytable as select empno,ename from emp where job = 'MANAGER'; 只复制表中一些字段
+
+### 10.4 表结构的增删改（略）
+
+使用 alter 操作：添加、删除、修改一个字段。
+
+不常用：
+
+* 第一：在实际开发中，需求一旦确定之后，表被设计好，很少会再去进行表结构的修改。因为开发进行中的时候，修改表结构成本比较高。修改表的结构对应的java代码就需要进行大量的修改。这个责任应该由设计人员来承担。
+* 第二：由于修改表结构的操作很少，所以我们不需要掌握，如果有一天真的要修改表的结构，可以使用工具。
+* 第三：修改表结构的操作是不需要写到java程序中的。
+
+## 11.DML语句
+
+### 11.1 insert语句
+
+* 语法格式：insert into 表名(字段1, 字段2, 字段3, …) values(值1, 值2, 值3, …);
+
+**注意：字段名和值要一一对应，数量要对应，数据类型要对应。**
+
+**insert语句中的字段名可以省略**，省略字段名等于都写上了，所以**值也要都写上**。
+
+例如：
+
+> insert into t_student values(2, 'lisi', 'f', 20, 'lisi@qq.com');
+
+* **插入日期类型**
+
+首先创建一个目标表t_user
+
+```mysql
+create table t_user(
+	id int,
+	name varchar(32),
+	birth date
+);
+```
+
+插入对应的数据
+
+>`insert into t_user(id,name,birth) values(1, 'zhangsan', str_to_date('01-10-1990','%d-%m-%Y'));`
+>mysql的日期格式：%Y 年、%m 月、%d日、%h 时、%i 分、%s 秒。
+
+**注意：如果提供的日期字符串是这个格式：%Y-%m-%d，str_to_date函数可以省略。**
+
+> `insert into t_user(id,name,birth) values(1, 'zhangsan', '1990-10-01');`
+
+* **查询日期类型**
+
+mysql默认使用%Y-%m-%d的格式。
+
+```mysql
+mysql> select name,birth from t_user;
++-----------+------------+
+| name      | birth      |
++-----------+------------+
+| zhangsan  | 1990-10-01 |
+| zhangsan1 | 1990-10-01 |
++-----------+------------+
+2 rows in set (0.01 sec)
+```
+
+如果不想用这个格式，可以使用date_format函数：
+
+> select id,name,date_format(birth, '%m/%d/%Y') as birth from t_user;
+
+```mysql
+mysql> select id,name,date_format(birth, '%m/%d/%Y') as birth from t_user;
++------+-----------+------------+
+| id   | name      | birth      |
++------+-----------+------------+
+|    1 | zhangsan  | 10/01/1990 |
+|    2 | zhangsan1 | 10/01/1990 |
++------+-----------+------------+
+2 rows in set (0.00 sec)
+```
+
+* date和datetime两个类型的区别
+
+  * date是短日期：只包括年月日信息。
+  * datetime是长日期：包括年月日时分秒信息。
+
+  实例：删除原来的表，新建一个表
+
+  ```mysql
+  drop table if exists t_user;
+  create table t_user(
+  	id int,
+  	name varchar(32),
+  	birth date, //短日期
+  	create_time datetime  //长日期，这条记录的创建时间
+  );
+  ```
+
+  mysql短日期默认格式：`%Y-%m-%d`
+  mysql长日期默认格式：`%Y-%m-%d %h:%i:%s`
+  `insert into t_user(id,name,birth,create_time) values(1, 'lisi', '1990-10-01', '2020-03-18 15:49:50');`
+  可以结合now()函数使用，now()函数返回当前时间并且带有时分秒：
+
+  `insert into t_user(id,name,birth,create_time) values(1, 'lisi', '1990-10-01', now());`
+
+* 一次插入多条数据
+
+```mysql
+insert into t_user(id, name, birth, create_time) values
+(1, 'zs', '1980-10-11', now()),
+(2, 'lisi', '1981-10-11', now()),
+(3, 'wangwu', '1982-10-11', now());
+```
+
+* 将结果插入到表中
+
+  > insert into dept_bak select * from dept;
+
+* **replace into … values**
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/0ee61fd16ec14149a90ffc7afb53013a.png)
+
+### 11.2 update 语句
+
+**语法格式**：update 表名 set 字段名1 = 值1, 字段名2 = 值2, 字段名3 = 值3 … where 条件;
+**注意：没有条件限制会导致所有数据全部更新。**
+
+### 11.3 delete语句
+
+**语法格式**：delete from 表名 where 条件;
+**注意：没有条件，整张表的数据会全部删除！**
+
+> `delete from dept_bak;` 删除表中所有的数据
+
+**删除的原理**：表中的数据被删除了，但是这个数据在硬盘上的真实存储空间不会被释放。
+优点：支持回滚，后悔了可以再恢复。
+
+缺点：删除效率比较低。
+
+* 快速删除表中数据
+
+使用：`truncate table dept_bak;`（属于DDL操作）
+`truncate tb_name`：全部删除（表清空，包含自增计数器重置）
+
+**原理**：物理删除，表被一次截断，效率较高。
+优点：快速。
+缺点：不支持回滚。
+
+**说明**：如果一张表非常大，比如有上亿条记录，使用delete执行可能需要1个小时才能删除完，效率低。选择使用truncate删除表中的数据，只需要不到1秒钟的时间就删除完，效率较高。但是在使用truncate之间，必须仔细询问客户是否真的要删除，并警告删除之后不可恢复。
+
+## 12.约束
+
+**constraint**：在创建表的时候，我们可以给表中的字段加上一些约束，来保证这个表中数据的完整性、有效性！
+
+**约束的作用就是为了保证：表中的数据有效！**
+
+**约束包括**：
+
+* 非空约束：not null
+* 唯一性约束：primary key
+* 主键约束：primary key
+* 外键约束：foreign key
+* 检查约束：check（mysql不支持，Oracle支持）
+
+所以，mysql重点学习4个类型的约束。
+
+* **非空约束：not null**
+
+非空约束所约束的字段不能为null。
+
+```mysql
+drop table if exists t_vip;
+create table t_vip(
+	id int,
+	name varchar(255) not null
+);
+```
+
+```mysql
+mysql> drop table if exists t_vip;
+Query OK, 0 rows affected, 1 warning (0.07 sec)
+
+mysql> create table t_vip(
+    -> id int,
+    -> name varchar(255) not null
+    -> );
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> insert into t_vip(id) value(1);
+ERROR 1364 (HY000): Field 'name' doesn't have a default value
+```
+
+上面实例标记为not null的name字段不能为空
+
+* **唯一性约束：unique**
+
+唯一性约束unique约束的字段不能重复，但是可以为NULL。
+
+```my
+mysql> drop table if exists t_vip;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> create table t_vip(
+    -> id int,
+    -> name varchar(255) unique,
+    -> email varchar(255) 
+    -> );
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> insert into t_vip(id,name,email) values(1,'jiaoery','jiaoery@qq.com');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into t_vip(id,name,email) values(2,'jiaoery','jiaoery1@qq.com');
+ERROR 1062 (23000): Duplicate entry 'jiaoery' for key 't_vip.name'
+```
+
+如何让两个字段联合起来具备唯一性
+
+**新需求：name和email两个字段联合起来具有唯一性！**
+
+```mysql
+ysql> drop table if exists t_vip;
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+mysql> create table t_vip( id int, name varchar(255), email varchar(255), unique(name,email));
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> insert into t_vip(id,name,email) values(1,'wangwu','wangwu@qq.com');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into t_vip(id,name,email) values(2,'wangwu','wangwu@sina.com');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into t_vip(id,name,email) values(3,'wangwu','wangwu@sina.com');
+ERROR 1062 (23000): Duplicate entry 'wangwu-wangwu@sina.com' for key 't_vip.name'
+
+```
+
+两个字段同时一样，才插入失败。
+
+**unique和not null 可以联合**
+
+```mysql
+mysql> drop table if exists t_vip;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> create table t_vip(
+    -> id int,
+    -> name varchar(255) not null unique
+    -> );
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> desc t_vip;
++-------+--------------+------+-----+---------+-------+
+| Field | Type         | Null | Key | Default | Extra |
++-------+--------------+------+-----+---------+-------+
+| id    | int          | YES  |     | NULL    |       |
+| name  | varchar(255) | NO   | PRI | NULL    |       |
++-------+--------------+------+-----+---------+-------+
+2 rows in set (0.02 sec)
+```
+
+可以看到name的类型为PRI（主键）。
+在mysql中，如果一个字段同时被 not null 和 unique 约束的话，该字段自动变成主键字段。**（但Oracle不一样）**
+
+* **主键约束（primary key，简称PK）**
+
+主键约束的相关术语：主键约束、主键字段、主键值。
+**主键值是每一行记录的唯一标识**
+
+**注意：任何一张表都应该有主键，没有主键，表无效！**
+
+主键的特征：not null +unique（不为空，同时不能重复）
+
+添加主键约束：
+
+```mysql
+create table t_vip(
+	id int primary key,
+	name varchar(255)
+);
+
+create table t_vip(
+	id int,
+	name varchar(255),
+	primary key(id)
+);
+
+```
+
+复合主键**（几个字段联合做主键）**
+
+```mysql
+create table t_vip(
+	id int,
+	name varchar(255),
+	email varchar(255),
+	primary key(id, name) //表级约束是联合的意思
+);
+insert into t_vip(id,name,email) values(1,'zhangsan','zs@123.com');
+insert into t_vip(id,name,email) values(1,'lisi','ls@123.com');
+```
+
+
+
+上面的是正确的写法，下面是错误的写法（老版本的sql可以）
+
+```mysql
+create table t_vip(
+	id int primary key,
+	name varchar(255) primary key,
+	email varchar(255)
+);
+```
+
+错误写法：这不是联合。一张表不能添加两个主键。
+
+
+
+**!!!**
+
+**主键值建议使用的类型**：
+int、bigint、char等类型，不建议使用varchar做主键。
+主键值一般都是数字，一般都是定长的！
+
+主键也可以这样分类：
+**自然主键**：主键值是一个自然数，和业务没关系。
+**业务主键**：主键值和业务紧密关联，例如拿银行卡账号做主键值。
+
+
+
+在mysql中，有一种机制，可以帮助我们自动维护一个主键值：
+
+```mysql
+ysql> drop table if exists t_vip;
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> create table t_vip( id int primary key auto_increment, name varchar(255)
+);
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> insert into t_vip(name) values('lisi');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into t_vip(name) values('zhangsan');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select * from t_vip;
++----+----------+
+| id | name     |
++----+----------+
+|  1 | lisi     |
+|  2 | zhangsan |
++----+----------+
+2 rows in set (0.01 sec)
+```
+
+
+
+* **外键约束（foreign key，简称FK）**
+
+设计数据库表，描述“班级和学生”信息：
+
+班级一张表、学生一张表
+
+
+
+**注意：添加了外键约束，表与表之间产生了父子关系。**
+t_class是父表、t_student是子表。
+删除表的顺序：先删子，再删父。
+创建表的顺序：先创建父，再创建子。
+删除数据的顺序：先删子，再删父。
+插入数据的顺序：先插入父，再插入子。
+
+```mysql
+drop table if exists t_student; //先删子
+drop table if exists t_class;
+
+create table t_class(
+	classno int primary key,
+	classname varchar(255)
+);
+create table t_student(
+	no int primary key auto_increment,
+	name varchar(255),
+	cno int,
+	foreign key(cno) references t_class(classno)
+);
+```
+
+```mysql
+mysql> drop table if exists t_student;
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+mysql> drop table if exists t_class;
+Query OK, 0 rows affected, 1 warning (0.00 sec)
+
+mysql> create table t_class(
+    -> classno int primary key,
+    -> classname varchar(255)
+    -> );
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> create table t_student(
+    -> no int primary key auto_increment,
+    -> name varchar(255),
+    -> cno int,
+    -> foreign key(cno) references t_class(classno)
+    -> );
+Query OK, 0 rows affected (0.01 sec)
+```
+
+注意：子表中的外键引用的附表中的某个字段，被引用的这个字段**不一定是主键**。但**至少具有unique唯一性**。
+**外键可以为null。**
+
+
+
+## 13.存储引擎
+
+### 13.1 存储引擎介绍
+
+存储引擎是MySQL中特有的一个术语，其他数据库中没有。
+实际上存储引擎是一个表存储/组织数据的方式，不同的存储引擎，表存储数据的方式不同。
+
+查看表：`show create table t_vip;`
+
+实例效果
+
+```mysql
+mysql> show create table t_vip;
++-------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Table | Create Table                                                                                                                                                                                            |
++-------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| t_vip | CREATE TABLE `t_vip` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci |
++-------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+1 row in set (0.00 sec)
+```
+
+mysql默认的存储引擎是：InnoDB
+mysql默认的字符编码方式是：utf8
+
+那么我们可以直接制定创建表的引擎和文字格式
+
+```mysql
+create table t_product(
+	id int primary key,
+	name varchar(255)
+) engine=InnoDB default charset=gbk;
+
+```
+
+* 查看mysql支持哪些存储引擎
+
+命令：`show engines \G`
+
+```mysql
+mysql> show engines \G
+*************************** 1. row ***************************
+      Engine: ARCHIVE
+     Support: YES
+     Comment: Archive storage engine
+Transactions: NO
+          XA: NO
+  Savepoints: NO
+*************************** 2. row ***************************
+      Engine: BLACKHOLE
+     Support: YES
+     Comment: /dev/null storage engine (anything you write to it disappears)
+Transactions: NO
+          XA: NO
+  Savepoints: NO
+*************************** 3. row ***************************
+      Engine: MRG_MYISAM
+     Support: YES
+     Comment: Collection of identical MyISAM tables
+Transactions: NO
+          XA: NO
+  Savepoints: NO
+*************************** 4. row ***************************
+      Engine: FEDERATED
+     Support: NO
+     Comment: Federated MySQL storage engine
+Transactions: NULL
+          XA: NULL
+  Savepoints: NULL
+*************************** 5. row ***************************
+      Engine: MyISAM
+     Support: YES
+     Comment: MyISAM storage engine
+Transactions: NO
+          XA: NO
+  Savepoints: NO
+*************************** 6. row ***************************
+      Engine: PERFORMANCE_SCHEMA
+     Support: YES
+     Comment: Performance Schema
+Transactions: NO
+          XA: NO
+  Savepoints: NO
+*************************** 7. row ***************************
+      Engine: InnoDB
+     Support: DEFAULT
+     Comment: Supports transactions, row-level locking, and foreign keys
+Transactions: YES
+          XA: YES
+  Savepoints: YES
+*************************** 8. row ***************************
+      Engine: MEMORY
+     Support: YES
+     Comment: Hash based, stored in memory, useful for temporary tables
+Transactions: NO
+          XA: NO
+  Savepoints: NO
+*************************** 9. row ***************************
+      Engine: CSV
+     Support: YES
+     Comment: CSV storage engine
+Transactions: NO
+          XA: NO
+  Savepoints: NO
+9 rows in set (0.00 sec)
+```
+
+### 13.2 mysql常用引擎
+
+#### 13.2.1 **MyISAM存储引擎**
+
+**用这种引擎创建出来的表，具有以下特征**：
+使用三个文件表示每个表：
+格式文件 – 存储表结构的定义（mytable.frm）
+数据文件 – 存储表行的内容（mytable.MYD）
+索引文件 – 存储表上索引（mytable.MYI）
+可被转换为压缩、只读表来节省空间
+
+#### 13.2.2 **InnoDB存储引擎**
+
+mysql默认的存储引擎，同时也是一个重量级的存储引擎。
+InnoDB支持事务，支持数据库崩溃后自动恢复机制。
+InnoDB存储引擎最重要的特点是：非常安全
+
+它管理的表主要具有以下特征：
+
+* 1.每个InnoDB表在数据库目录中以 .frm格式文件表示。
+* 2.InnoDB表空间tablespace被用于存储表的内容
+* 3.提供一组用来记录事务性活动的日志文件
+* 4.用commit（提交）、SAVEPOINT及ROLLBACK（回滚）支持事务处理。
+* 5.提供全ACID兼容
+* 6.在MySQL服务器崩溃后提供自动恢复。
+* 7.多版本（MVCC）和行级锁定
+* 8.支持外键及引用的完整性，包括级联删除和更新。InnoDB最大的特点就是支持事务：保证数据的安全，效率不高，并且也不能压缩，不能转换为只读，不能很好的节省存储空间
+
+#### 13.2.3 **MEMORY存储引擎**
+
+使用MEMORY存储引擎的表，其数据存储在内存中，且行的长度固定，这两个特点使得MEMORY存储引擎非常快。
+
+MEMORY存储引擎管理的表具有下列特征：
+在数据库目录内，每个表均以 .frm格式的文件表示。
+表数据及索引被存储在内存中。（目的就是快，查询快！）
+表级锁机制。
+不能包含TEXT或BLOB字段。
+
+MEMORY存储引擎以前被称为HEAP引擎。
+
+优点：查询效率最高，不需要和硬盘交互。
+缺点：不安全，关机后数据消失。因为数据和索引都是在内存当中。
+
+## 14.事务（必须掌握和理解）
+
+### 14.1 认识事务
+
+一个事务其实就是一个完整的业务逻辑，是一个最小的工作单元。要么同时成功，要么同时失败，不可再分。
+
+什么是一个完整的事物逻辑？
+
+>假设转账，从A账户向B账户转账10000
+>A账户的钱减去10000（update语句）
+>B账户的钱加上10000（update语句）
+>这就是一个完整的业务逻辑
+
+这两个update语句要求必须同时成功或者同时失败，才能保证钱是正确的。
+
+**只有DML语句才会有事务这一说，其他语句和事务无关。**
+insert、delete、update。
+一旦你的操作涉及到增、删、改，那么就一定要考虑安全问题。
+
+### 14.2 事务的实现
+
+因为做某件事情的时候，需要多条DML语句共同联合起来才能完成，所以需要事务的存在。如果任何一件复杂的事情都能一条DML语句搞定，那么事务就没有存在的价值了。
+所以，本质上，一个事务就是多条DML语句同时成功，或者同时失败！
+
+事务：就是批量的DML语句同时成功，或者同时失败。
+
+**Q：事务是怎么做到多条DML语句同时成功和同时失败的？**
+
+nnoDB存储引擎：提供一组用来**记录事务性活动的日志文件**。
+
+结构如下：
+
+>事务开启：
+>insert
+>delete
+>update
+>…
+>事务结束
+
+提交事务：清空事务性活动的日志文件，将数据全部彻底持久化到数据库表中。提交事务标志着，事务的结束，并且是一种全部成功的结束。
+
+回滚事务：将之前所有的DML操作全部撤销，并且清空事务性活动的日志文件。回滚事务标志着，事物的结束，并且是一种全部失败的结束。
+
+**提交和回滚实现**
+提交事务：commit;
+回滚事务：rollback;（回滚是回滚到上一次的提交点）
+事务对应的英文单词是：transaction
+
+
+
+mysql中默认事务是自动提交的，就是每执行一条DML语句，则提交一次。
+
+开启事务，则会关闭自动提交机制
+
+```mysql
+start transaction;
+insert into dept_bak values(10, 'abc', 'tj');
+rollback; //回滚，则上面的insert语句被撤销
+```
+
+### 14.3 事务的4个特性
+
+**ACID**
+
+**原子性（A）**：说明事务是最小的工作单元，不可再分。
+
+**一致性（C）**：所有事务要求，在同一个事务当中，所有操作必须同时成功，或者同时失败，以保证数据的一致性。
+
+**隔离性（I）**：A事务和B事务之间具有一定的隔离。相当于多线程并发访问的每个线程。
+
+**持久性（D）**：事务最终结束的一个保障。事务提交，就相当于将没有保存到硬盘上的数据保存到硬盘上！
+
+
+
+**重点研究事务的隔离性**
+
+形象的说，A教室和B教室中间有一道墙，这道墙可以很厚，也可以很薄。越厚，隔离级别越高。
+
+事务与事务之间有4个隔离级别：
+
+* **读未提交**：read uncommitted（最低隔离级别）
+  事务A可以读取到事务B未提交的数据。（没有提交就读取到了）
+  这种隔离级别存在的问题就是：脏读现象（Dirty Read），我们称堵到了脏数据。
+  这种隔离级别一般都是理论上的，大多数的数据库隔离级别都是二挡起步。
+* **读已提交**：read commited
+  事务A只能读取到事务B提交之后的数据。解决了脏读现象。
+  这种隔离级别存在的问题是：不可重复读取数据。
+  这种隔离级别是比较真实的数据，每次读到的数据是绝对真实的。
+  Oracle数据库默认的隔离级别是：read commited
+* **可重复读**：repeatable read
+  提交之后也读不到，永远读取的都是刚开启事务时的数据。
+  事务A开启之后，不管多久，每一次在事务A中读取到的数据，都是一致的。即使事务B将数据已经修改，并且提交了，事务A读取到的数据还是没有发生改变，这就是可重复读。
+  存在的问题：可能会出现幻影读。每一次读取到的数据都是幻影，不真实。
+  mysql中默认的事务隔离级别就是这个。
+* **序列化/串行化**：serializable（最高的隔离级别）
+  这是最高隔离级别，效率最低。解决了所有的问题。
+  这种隔离级别表示事务排队，不能并发！
+  synchronized，线程同步（事务同步）
+  每次读取到的数据都是最真实的，但是效率是最低的。
+
+
+
+**Example:验证事务隔离级别**(设置后一定要退出一次)
+
+查看隔离级别：`select @@tx_isolation`(8.0版本以下) `SELECT @@global.transaction_isolation;`(8.0及以上版本)
+
+```mysql
+mysql> SELECT @@global.transaction_isolation;
++--------------------------------+
+| @@global.transaction_isolation |
++--------------------------------+
+| REPEATABLE-READ                |
++--------------------------------+
+1 row in set (0.00 sec)
+```
+
+* **验证：read uncommitted**（验证脏读现象）
+
+设置全局隔离级别为“读未提交”：`set global transaction isolation level read uncommitted;`（设置之后一定要退出一次才可以）
+
+窗口A
+
+```mysql
+ysql> start transaction;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> select * from t_user;
++------+----------+------------+---------------------+
+| id   | name     | birth      | create_time         |
++------+----------+------------+---------------------+
+|    1 | lisi     | 1990-10-01 | 2020-03-18 15:49:50 |
+|    2 | lisi2    | 1990-10-01 | 2022-05-17 16:42:49 |
+|    3 | jiaoery  | 1992-09-08 | 2022-05-24 18:20:00 |
+|    4 | jiaoery4 | 1992-09-08 | 2022-05-24 18:31:32 |
+|    5 | jiaoery5 | 1992-09-08 | 2022-05-24 18:39:33 |
+|    6 | jiaoery6 | 1992-09-08 | 2022-05-24 18:55:08 |
++------+----------+------------+---------------------+
+6 rows in set (0.00 sec)
+
+# 这里暂停去窗口B操作
+mysql> select * from t_user;
++------+----------+------------+---------------------+
+| id   | name     | birth      | create_time         |
++------+----------+------------+---------------------+
+|    1 | lisi     | 1990-10-01 | 2020-03-18 15:49:50 |
+|    2 | lisi2    | 1990-10-01 | 2022-05-17 16:42:49 |
+|    3 | jiaoery  | 1992-09-08 | 2022-05-24 18:20:00 |
+|    4 | jiaoery4 | 1992-09-08 | 2022-05-24 18:31:32 |
+|    5 | jiaoery5 | 1992-09-08 | 2022-05-24 18:39:33 |
+|    6 | jiaoery6 | 1992-09-08 | 2022-05-24 18:55:08 |
+|    7 | jiaoery7 | 1992-09-08 | 2022-05-25 11:15:45 |
++------+----------+------------+---------------------+
+7 rows in set (0.00 sec)
+
+#B rollbac后进行操作
+mysql> select * from t_user;
++------+----------+------------+---------------------+
+| id   | name     | birth      | create_time         |
++------+----------+------------+---------------------+
+|    1 | lisi     | 1990-10-01 | 2020-03-18 15:49:50 |
+|    2 | lisi2    | 1990-10-01 | 2022-05-17 16:42:49 |
+|    3 | jiaoery  | 1992-09-08 | 2022-05-24 18:20:00 |
+|    4 | jiaoery4 | 1992-09-08 | 2022-05-24 18:31:32 |
+|    5 | jiaoery5 | 1992-09-08 | 2022-05-24 18:39:33 |
+|    6 | jiaoery6 | 1992-09-08 | 2022-05-24 18:55:08 |
++------+----------+------------+---------------------+
+6 rows in set (0.00 sec)
+```
+
+
+
+窗口B
+
+```mysql
+mysql> start transaction;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> insert into t_user values(7,'jiaoery7','1992-09-08',now());
+Query OK, 1 row affected (0.00 sec)
+
+mysql> select * from t_user;
++------+----------+------------+---------------------+
+| id   | name     | birth      | create_time         |
++------+----------+------------+---------------------+
+|    1 | lisi     | 1990-10-01 | 2020-03-18 15:49:50 |
+|    2 | lisi2    | 1990-10-01 | 2022-05-17 16:42:49 |
+|    3 | jiaoery  | 1992-09-08 | 2022-05-24 18:20:00 |
+|    4 | jiaoery4 | 1992-09-08 | 2022-05-24 18:31:32 |
+|    5 | jiaoery5 | 1992-09-08 | 2022-05-24 18:39:33 |
+|    6 | jiaoery6 | 1992-09-08 | 2022-05-24 18:55:08 |
+|    7 | jiaoery7 | 1992-09-08 | 2022-05-25 11:15:45 |
++------+----------+------------+---------------------+
+7 rows in set (0.00 sec)
+
+#A查询之后进行的操作
+mysql> rollback;
+Query OK, 0 rows affected (0.00 sec)
+```
+
+解释：打开两个DOS窗口，分别进入数据库，一个DOS窗口开启一个事务。开启事务后，事务B中进行的操作还未提交，在事务A中就能查询到。(无法复现了)
+
+
+
+* **验证：read commited**
+
+设置全局隔离级别为“读已提交”：`set global transaction isolation level read committed;`（记得退出）
+
+事务A
+
+```mysql
+mysql> start transaction;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> select * from t_user;
++------+----------+------------+---------------------+
+| id   | name     | birth      | create_time         |
++------+----------+------------+---------------------+
+|    1 | lisi     | 1990-10-01 | 2020-03-18 15:49:50 |
+|    2 | lisi2    | 1990-10-01 | 2022-05-17 16:42:49 |
+|    3 | jiaoery  | 1992-09-08 | 2022-05-24 18:20:00 |
+|    4 | jiaoery4 | 1992-09-08 | 2022-05-24 18:31:32 |
+|    5 | jiaoery5 | 1992-09-08 | 2022-05-24 18:39:33 |
+|    6 | jiaoery6 | 1992-09-08 | 2022-05-24 18:55:08 |
++------+----------+------------+---------------------+
+6 rows in set (0.00 sec)
+# B执行插入命令，未提交
+mysql> select * from t_user;
++------+----------+------------+---------------------+
+| id   | name     | birth      | create_time         |
++------+----------+------------+---------------------+
+|    1 | lisi     | 1990-10-01 | 2020-03-18 15:49:50 |
+|    2 | lisi2    | 1990-10-01 | 2022-05-17 16:42:49 |
+|    3 | jiaoery  | 1992-09-08 | 2022-05-24 18:20:00 |
+|    4 | jiaoery4 | 1992-09-08 | 2022-05-24 18:31:32 |
+|    5 | jiaoery5 | 1992-09-08 | 2022-05-24 18:39:33 |
+|    6 | jiaoery6 | 1992-09-08 | 2022-05-24 18:55:08 |
++------+----------+------------+---------------------+
+6 rows in set (0.00 sec)
+
+# B提交插入命令
+mysql> select * from t_user;
++------+----------+------------+---------------------+
+| id   | name     | birth      | create_time         |
++------+----------+------------+---------------------+
+|    1 | lisi     | 1990-10-01 | 2020-03-18 15:49:50 |
+|    2 | lisi2    | 1990-10-01 | 2022-05-17 16:42:49 |
+|    3 | jiaoery  | 1992-09-08 | 2022-05-24 18:20:00 |
+|    4 | jiaoery4 | 1992-09-08 | 2022-05-24 18:31:32 |
+|    5 | jiaoery5 | 1992-09-08 | 2022-05-24 18:39:33 |
+|    6 | jiaoery6 | 1992-09-08 | 2022-05-24 18:55:08 |
+|    7 | jiaoery7 | 1992-09-08 | 2022-05-25 11:27:14 |
++------+----------+------------+---------------------+
+7 rows in set (0.00 sec)
+```
+
+
+
+事务B
+
+```mysql
+mysql> start transaction;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> insert into t_user values(7,'jiaoery7','1992-09-08',now());
+Query OK, 1 row affected (0.00 sec)
+
+# A查询一次后再提交
+mysql> commit;
+Query OK, 0 rows affected (0.00 sec)
+```
+
+
+
+解释：事务B进行操作未提交，在事务A查询不到修改后的记录。只有事务B提交了，才能在事务A查询到。（事务B提交，事务A才能查到）
+
+* **验证：repeatable read**
+
+设置全局隔离级别为“可重复读”：`set global transaction isolation level repeatable read;`（记得要退出）
+
+事务A
+
+```mysql
+mysql> start transaction;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> select * from t_user;
++------+----------+------------+---------------------+
+| id   | name     | birth      | create_time         |
++------+----------+------------+---------------------+
+|    1 | lisi     | 1990-10-01 | 2020-03-18 15:49:50 |
+|    2 | lisi2    | 1990-10-01 | 2022-05-17 16:42:49 |
+|    3 | jiaoery  | 1992-09-08 | 2022-05-24 18:20:00 |
+|    4 | jiaoery4 | 1992-09-08 | 2022-05-24 18:31:32 |
+|    5 | jiaoery5 | 1992-09-08 | 2022-05-24 18:39:33 |
+|    6 | jiaoery6 | 1992-09-08 | 2022-05-24 18:55:08 |
+|    7 | jiaoery7 | 1992-09-08 | 2022-05-25 11:27:14 |
++------+----------+------------+---------------------+
+7 rows in set (0.00 sec)
+
+mysql> select * from t_user;
++------+----------+------------+---------------------+
+| id   | name     | birth      | create_time         |
++------+----------+------------+---------------------+
+|    1 | lisi     | 1990-10-01 | 2020-03-18 15:49:50 |
+|    2 | lisi2    | 1990-10-01 | 2022-05-17 16:42:49 |
+|    3 | jiaoery  | 1992-09-08 | 2022-05-24 18:20:00 |
+|    4 | jiaoery4 | 1992-09-08 | 2022-05-24 18:31:32 |
+|    5 | jiaoery5 | 1992-09-08 | 2022-05-24 18:39:33 |
+|    6 | jiaoery6 | 1992-09-08 | 2022-05-24 18:55:08 |
+|    7 | jiaoery7 | 1992-09-08 | 2022-05-25 11:27:14 |
++------+----------+------------+---------------------+
+7 rows in set (0.00 sec)
+
+mysql> commit;
+Query OK, 0 rows affected (0.00 sec)
+
+#只有commit后才可以查阅得到
+mysql> select * from t_user;
++------+----------+------------+---------------------+
+| id   | name     | birth      | create_time         |
++------+----------+------------+---------------------+
+|    1 | lisi     | 1990-10-01 | 2020-03-18 15:49:50 |
+|    2 | lisi2    | 1990-10-01 | 2022-05-17 16:42:49 |
+|    3 | jiaoery  | 1992-09-08 | 2022-05-24 18:20:00 |
+|    4 | jiaoery4 | 1992-09-08 | 2022-05-24 18:31:32 |
+|    5 | jiaoery5 | 1992-09-08 | 2022-05-24 18:39:33 |
+|    6 | jiaoery6 | 1992-09-08 | 2022-05-24 18:55:08 |
+|    7 | jiaoery7 | 1992-09-08 | 2022-05-25 11:27:14 |
+|    8 | jiaoery8 | 1992-09-08 | 2022-05-25 11:34:44 |
++------+----------+------------+---------------------+
+8 rows in set (0.00 sec)
+```
+
+
+
+事务B
+
+```mysql
+mysql> start transaction;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> insert into t_user values(8,'jiaoery8','1992-09-08',now());
+Query OK, 1 row affected (0.00 sec)
+
+mysql> commit;
+Query OK, 0 rows affected (0.00 sec)
+```
+
+
+
+解释：事务B操作完提交后，在事务A中查询到的数据，依然是开启事务之前的数据。不论事务B做什么操作，提交几次，只要事务A没提交，查询到的就是以前的。（事务B提交，事务A提交了才能查到）
+
+
+
+* **验证：serializable**
+
+设置全局隔离级别为“序列化”：`set global transaction isolation level serializable;`
+
+事务A
+
+```mysql
+mysql> start transaction;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> select * from t_user;
++------+----------+------------+---------------------+
+| id   | name     | birth      | create_time         |
++------+----------+------------+---------------------+
+|    1 | lisi     | 1990-10-01 | 2020-03-18 15:49:50 |
+|    2 | lisi2    | 1990-10-01 | 2022-05-17 16:42:49 |
+|    3 | jiaoery  | 1992-09-08 | 2022-05-24 18:20:00 |
+|    4 | jiaoery4 | 1992-09-08 | 2022-05-24 18:31:32 |
+|    5 | jiaoery5 | 1992-09-08 | 2022-05-24 18:39:33 |
+|    6 | jiaoery6 | 1992-09-08 | 2022-05-24 18:55:08 |
+|    7 | jiaoery7 | 1992-09-08 | 2022-05-25 11:27:14 |
+|    8 | jiaoery8 | 1992-09-08 | 2022-05-25 11:34:44 |
++------+----------+------------+---------------------+
+8 rows in set (0.00 sec)
+
+mysql> select * from t_user;
++------+----------+------------+---------------------+
+| id   | name     | birth      | create_time         |
++------+----------+------------+---------------------+
+|    1 | lisi     | 1990-10-01 | 2020-03-18 15:49:50 |
+|    2 | lisi2    | 1990-10-01 | 2022-05-17 16:42:49 |
+|    3 | jiaoery  | 1992-09-08 | 2022-05-24 18:20:00 |
+|    4 | jiaoery4 | 1992-09-08 | 2022-05-24 18:31:32 |
+|    5 | jiaoery5 | 1992-09-08 | 2022-05-24 18:39:33 |
+|    6 | jiaoery6 | 1992-09-08 | 2022-05-24 18:55:08 |
+|    7 | jiaoery7 | 1992-09-08 | 2022-05-25 11:27:14 |
+|    8 | jiaoery8 | 1992-09-08 | 2022-05-25 11:34:44 |
++------+----------+------------+---------------------+
+8 rows in set (0.00 sec)
+
+mysql> commit;
+Query OK, 0 rows affected (0.00 sec)
+```
+
+事务B
+
+```mysql
+mysql> start transaction;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> start transaction;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> insert into t_user values(9,'jiaoery9','1992-09-08',now());
+ERROR 1205 (HY000): Lock wait timeout exceeded; try restarting transaction
+mysql> insert into t_user values(9,'jiaoery9','1992-09-08',now());
+ERROR 1205 (HY000): Lock wait timeout exceeded; try restarting transaction
+
+# A未提交，B会卡住；但是A commit后 B会立即执行
+mysql> insert into t_user values(9,'jiaoery9','1992-09-08',now());
+Query OK, 1 row affected (2.60 sec)
+```
+
+
+
+解释：在事务A中进行一些操作，没提交，事务B就去查询结果，会卡在那里。当事务A提交，事务B会立马出现结果。相当于同步了。
+
+## 15.索引（index）
+
+索引是在数据库表的字段上添加的，是为了提高查询效率存在的一种机制。
+一张表的一个字段可以添加一个索引，当然，多个字段联合起来也可以添加索引。
+索引相当于一本书的目录，是为了缩小扫描范围而存在的一种机制。
+
+根据SQL语句扫描：`select * from t_user where name = 'jack'`，扫描name查找。
+如果name字段上没有添加索引（目录），或者说没有给name字段创建索引，MySQL会进行全扫描，会将name字段上的每一个值都比对一遍。效率比较低。
+
+MySQL在查询方面主要就是两种方式：
+第一种方式：全表扫描。
+第二种方式：根据索引检索。
+
+在mysql数据库当中，索引也是需要排序的，并且这个索引的排序和TreeSet数据结构相同。TreeSet底层是一个自平衡的二叉树！在mysql当中索引是一个B-Tree数据结构。
+遵循左小右大原则存放，采用中序遍历方式遍历取数据。
+
+### 15.1 索引的实现原理
+
+假设有一张用户表：t_user
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/4237c2ce018b4395b908c565aabd2575.png)
+
+说明
+1.在任何数据库当中主键上都会自动添加索引对象，id字段上自动有索引。另外在mysql当中，一个字段上如果有unique约束的话，也会自动创建索引对象。
+2.在任何数据库当中，任何一张表的任何一条记录在硬盘存储上都有一个硬盘的物理存储编号。
+3.在mysql当中，索引是一个单独的对象，不同的存储引擎以不同的形式存在。在MyISAM存储引擎中，索引存储在一个 .MYI文件中；在InnoDB存储引擎中，索引存储在一个逻辑名称叫做tablespace当中；在MEMORY存储引擎当中，索引被存储在内存当中。不管索引存储在哪里，索引在mysql当中都是一个树的形式存在。（自平衡二叉树：B-Tree）
+
+**什么情况下，我们会考虑给字段添加索引呢？**
+
+1.数据量庞大（到底有多么庞大算庞大，这个需要测试，因为每一个硬件环境不同）。
+2.该字段经常出现在where的后面，以条件的形式存在，也就是说这个字段总是被扫描。
+3.该字段很少的DML操作，因为DML之后，索引需要重新排序。
+
+建议不要随意添加索引，因为索引也是需要维护的，太多的话反而会降低系统的性能。建议通过主键查询，建议通过unique约束的字段进行查询，效率会比较高。
+
+### 15.2 创建和删除索引
+
+* 创建索引：
+
+> create index emp_ename_index on emp(ename);
+
+给emp表的ename字段添加索引，起别名：emp_ename_index
+
+* 删除索引
+
+> drop index emp_ename_index on emp;
+
+将emp表上的emp_ename_index索引对象删除。
+
+
+
+在mysql当中，查看一个SQL语句是否使用了索引进行检索：
+`explain select * from emp where ename = 'KING';`
+
+### 15.3 索引失效
+
+下面几种情况下，索引将会失效
+
+#### 15.3.1 "%"开头的模糊查询
+
+> select * from emp where ename like '%T';
+
+尽量避免模糊查询的时候以"%"开头，这是一种优化的策略。
+可以用SQL语句查看：
+
+> explain select * from emp where ename like '%T';
+
+#### 15.3.2 使用or
+
+如果使用or，那么要求or两边的条件字段都要有索引，索引才生效。如果其中一个字段没有索引，那么另一个字段上的索引也会失效。所以不建议使用or，可以使用union来代替。
+
+#### 15.3.3 使用复合索引
+
+使用复合索引的时候，**要使用左侧的列查找**，索引才生效。使用右侧，则失效。
+复合索引：两个字段，或者更多的字段联合起来添加一个索引。
+
+`create index emp_job_sal_index on emp(job,sal);`
+
+使用左侧：`explain select * from emp where job = 'MANAGER';` 生效
+
+使用右侧：`explain select * from emp where sal= 800;` 失效
+
+#### 15.3.4 索引列参与运算
+
+在where当中索引列参加了运算，索引失效。
+
+`explain select * from emp where sal+1 = 800;`
+
+#### 15.3.5 索引列使用了函数
+
+在where当中索引列使用了函数。
+`explain select * from emp where lower(ename) = 'smith';`
+
+**索引是各种数据库进行优化的重要手段，优化的时候优先考虑的因素就是索引。**
+
+**索引在数据库当中分了很多类**：
+
+单一索引：一个字段上添加索引。
+复合索引：两个字段或者更多的字段上添加索引。
+主键索引：主键上添加索引。
+唯一性索引：具有unique约束的字段上添加索引。
+（注意：唯一性比较弱的字段上添加索引的用处不大。）
+
+
+
+例：需要在examination_info表创建以下索引，规则如下：
+在duration列创建**普通索引** idx_duration、在exam_id列创建**唯一性索引** uniq_idx_exam_id、在tag列创建**全文索引** full_idx_tag。
+
+```mysql
+create index idx_duration on examination_info(duration);
+create unique index uniq_idx_exam_id on examination_info(exam_id);
+create fulltext index full_idx_tag on examination_info(tag);
+```
+
+
+
+## 参考资料
+
+MySQL查看和修改事务隔离级别：http://c.biancheng.net/view/7266.html
