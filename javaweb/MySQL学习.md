@@ -3118,7 +3118,144 @@ create unique index uniq_idx_exam_id on examination_info(exam_id);
 create fulltext index full_idx_tag on examination_info(tag);
 ```
 
-dasd
+## 16.视图
+
+View：站在不同的角度去看待同一份数据
+
+创建视图对象：`create view dept2_view as select * from dept2;`
+
+删除视图对象：`drop view dept2_view;`
+
+**注意：只有DQL语句(Data Query Language)才能以view的形式创建。**
+
+**create view view_name as 这里的语句必须是DQL语句**;
+
+我们可以面向视图对象进行增删改查，对视图对象的增删改查，会导致原表被操作！（视图的特点：通过对视图的操作，会影响到原表数据
+
+```mysql
+create view
+	emp_dept_view
+as
+select
+   e.ename, e.sal, d.dname
+from
+   emp e
+join
+   dept d 
+on
+  e.deptno = d.deptno;
+  
+  //修改视图，原表的数据也会修改
+  update emp_dept_view set sal = 1000 where dname = 'ACCOUNTING'; 
+```
+
+**视图对象在实际开发中到底有什么用？**
+
+假设有一条非常复杂的SQL语句，而这条SQL语句需要在不同的位置上反复使用。
+每一次使用这个SQL语句的时候都需要重新编写，很长，很麻烦。
+可以把这条复杂的SQL语句以视图对象的形式新建。
+在需要编写这条SQL语句的位置直接使用视图对象，可以大大简化开发，并且利于后期的维护，因为修改的时候也只需要修改一个位置就行，只需要修改视图对象映射的SQL语句。
+
+我们以后面向视图开发的时候，使用视图的时候可以像使用table一样，可以对视图进行增删改查等操作。
+视图不是在内存当中，视图对象也是存储在硬盘上，不会消失。
+
+**再次提醒**：
+视图对应的语句只能是DQL语句。
+但是视图对象创建完成之后，可以对视图进行增删改查等操作。
+
+## 17.DBA常用命令
+
+* 新建用户
+* 授权
+* 回收权限
+* **数据的备份（数据的导入和导出）**
+
+**数据的导出**：
+
+注意：在windows的dos命令窗口中
+`mysqldump 数据库>D:\数据库.sql -uroot -p密码`
+也可以导出指定的表：
+`mysqldump bjpowernode emp>D:\bjpowernode .sql -uroot -p密码`
+
+
+
+- **数据导入**：
+  注意：需要先登录到mysql数据库服务器上。
+  然后创建数据库：create database bjpowernode;
+  使用数据库：use bjpowernode;
+  然后初始化数据库：`source D:\bjpowernode.sql`
+
+## 18.数据库三范式
+
+数据库设计范式：数据库表的设计依据，教你怎么进行数据库表的设计。
+
+* 第一范式：要求任何一张表必须有主键，每一个字段原子性不可再分。
+* 第二范式：建立在第一范式的基础上，要求所有非主键字段完全依赖主键，不要产生部分依赖。
+* 第三范式：建立在第二范式的基础上，要求所有非主键字段直接依赖主键，不要产生传递依赖。
+
+三范式是面试官经常问的，所以一定要熟记在心！
+
+设计数据库表的时候，按照以上的范式进行，可以避免表中数据的冗余，避免空间的浪费
+
+### 18.1 第一范式
+
+最核心，最重要的范式，所有表的设计都需要满足。
+
+1.有主键；2.每个字段原子性不可再分
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/de737cf1a8bf45599db858a99e710063.png)
+
+不满足，没有主键，联系方式可以再分
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/987ca7ae3981499fb63e8ab164297b34.png)
+
+### 18.2 第二范式
+
+建立在第一范式的基础上
+
+1.所以有的非主键字段必须完全依赖主键;2.不要产生部分依赖
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/a6bf686d545749489b893a9f49fe0221.png)
+
+产生部分依赖，数据冗余了。
+
+为了上一张表满足第二范式，需要三张表来表示多对对的关系
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/e7932c2ed8af440eb408a651de2ce1c3.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBATXlfaGFpcg==,size_19,color_FFFFFF,t_70,g_se,x_16)
+
+多对多的设计：
+
+三张表，关系表两个外键！
+
+### 18.3 第三范式
+
+建立在第二范式的基础上
+
+所有非主键字段直接依赖主键，不要产生传递依赖
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/a0d749355f4a4e5d85496997bfdad7e7.png)
+
+以上表是一对多的关系，满足第二范式，因为主键不是复合主键，没有产生部分依赖。
+但不满足第三范式，班级名称依赖班级编号，班级编号依赖学生编号，产生传递依赖。造成数据冗余。
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/8cced6ae165f403aa3eef8fe945ad423.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBATXlfaGFpcg==,size_15,color_FFFFFF,t_70,g_se,x_16)
+
+**一对多的设计**：
+两张表，多的表加外键！
+
+
+
+**总结数据库表的设计**：
+
+1. 一对一，第二张表外键唯一（fk+unique）
+2. 一对多，两张表，多的表加外键！
+3. 多对多，三张表，关系表两个外键！
+
+**嘱咐：**
+数据库设计三范式是理论上的，实践和理论有的时候有偏差。
+最终的目的都是为了满足客户的需求，有的时候会拿冗余换执行速度。
+因为在SQL中，表和表之间连接次数越多，效率越低。（笛卡尔积）
+有的时候可能会存在冗余，但是为了减少表的连接次数，这样做也是合理的，并且对于开发人员来说，SQL语句的编写难度也会降低。
 
 ## 参考资料
 
