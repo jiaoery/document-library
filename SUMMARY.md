@@ -13,7 +13,6 @@
 ## 后端学习（鱼皮路径）
 
 * [学习路径](javaweb/学习路径.md)
-
 * [环境搭建](javaweb/环境配置.md)
 * [maven](javaweb/maven.md)
 * [Mysql学习](javaweb/MySQL学习.md)
@@ -21,7 +20,12 @@
 * [Spring](javaweb/Spring.md)
 * [SpringBoot1](javaweb/SpringBoot学习1.md)
 * [SpringBoot2](javaweb/SpringBoot学习2.md)
-* 
+
+## SpringBoot实战课（神思者）
+
+* [开发EMOS系统](javaPractice/开发EMOS系统.md)
+* [开发笔记](Springboot在线协同办公系统.md)
+
+
 
 # 	
-
