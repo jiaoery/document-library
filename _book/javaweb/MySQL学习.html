@@ -302,6 +302,59 @@
     
 
     
+        
+        <li class="header">SpringBoot实战课（神思者）</li>
+        
+        
+    
+        <li class="chapter " data-level="4.1" data-path="../javaPractice/开发EMOS系统.html">
+            
+                <a href="../javaPractice/开发EMOS系统.html">
+            
+                    
+                    开发EMOS系统
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2" data-path="../javaPractice/Springboot在线协同办公系统.html">
+            
+                <a href="../javaPractice/Springboot在线协同办公系统.html">
+            
+                    
+                    开发笔记
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Android开发知识库</li>
+        
+        
+    
+        <li class="chapter " data-level="5.1" data-path="../android/keytool命令行.html">
+            
+                <a href="../android/keytool命令行.html">
+            
+                    
+                    keytool 命令行
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
 
     <li class="divider"></li>
 
@@ -443,12 +496,17 @@ alias mysqlstop=&apos;sudo /usr/local/mysql/support-files/mysql.server stop&apos
 <ul>
 <li>&#x67E5;&#x770B;mysql&#x6570;&#x636E;&#x5E93;&#x7684;&#x7248;&#x672C;&#x53F7;</li>
 </ul>
-<pre class="language-"><code class="lang-bash"><span class="token keyword">select</span> verison<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<pre class="language-"><code class="lang-mysql">select verison();
 </code></pre>
 <ul>
 <li>&#x67E5;&#x770B;&#x5F53;&#x524D;&#x4F7F;&#x7528;&#x7684;&#x662F;&#x54EA;&#x4E2A;&#x6570;&#x636E;&#x5E93;</li>
 </ul>
-<pre class="language-"><code class="lang-bash"><span class="token keyword">select</span> database<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<pre class="language-"><code class="lang-mysql">select database();
+</code></pre>
+<ul>
+<li>&#x5220;&#x9664;&#x6570;&#x636E;&#x5E93;</li>
+</ul>
+<pre class="language-"><code class="lang-mysql">drop database [&#x6570;&#x636E;&#x5E93;&#x540D;]
 </code></pre>
 <p><strong>&#x6CE8;&#x610F;&#xFF1A;\c&#x7528;&#x6765;&#x7EC8;&#x6B62;&#x4E00;&#x6761;&#x547D;&#x4EE4;&#x7684;&#x8F93;&#x5165;&#x3002;</strong></p>
 <h2 id="5&#x5E38;&#x7528;sql&#x8BED;&#x53E5;&#x7684;&#x5206;&#x7C7B;"><a name="5&#x5E38;&#x7528;sql&#x8BED;&#x53E5;&#x7684;&#x5206;&#x7C7B;" class="anchor-navigation-ex-anchor" href="#5&#x5E38;&#x7528;sql&#x8BED;&#x53E5;&#x7684;&#x5206;&#x7C7B;"><i class="fa fa-link" aria-hidden="true"></i></a>5.&#x5E38;&#x7528;SQL&#x8BED;&#x53E5;&#x7684;&#x5206;&#x7C7B;</h2>
@@ -495,14 +553,14 @@ alter&#xFF1A;&#x4FEE;&#x6539;</p>
 </ul>
 <pre class="language-"><code class="lang-mysql">resource [sql&#x8DEF;&#x5F84;&#x540D;]
 </code></pre>
-<p><strong>&#x6CE8;&#x610F;&#xFF1A;&#x8DEF;&#x5F84;&#x4E2D;&#x4E0D;&#x8981;&#x6709;&#x4E2D;&#x6587;&#xFF01;&#xFF01;&#xFF01;&#xFF01;</strong>&#x8FD9;&#x91CC;&#x4F7F;&#x7528;&#x5230;&#x7684;&#x8D44;&#x6E90;<a href="https://pan.baidu.com/share/init?surl=kW7V3yLaxDJxCaZ2yp019g" target="_blank">https://pan.baidu.com/share/init?surl=kW7V3yLaxDJxCaZ2yp019g</a> &#x5BC6;&#x7801;&#xFF1A;y346</p>
+<p><strong>&#x6CE8;&#x610F;&#xFF1A;&#x8DEF;&#x5F84;&#x4E2D;&#x4E0D;&#x8981;&#x6709;&#x4E2D;&#x6587;&#xFF01;&#xFF01;&#xFF01;&#xFF01;&#x5E76;&#x4E14;&#x8DEF;&#x5F84;&#x7B26;&#x53F7;&#x5FC5;&#x987B;&#x662F; / &#x800C;&#x4E0D;&#x662F;</strong>&#x8FD9;&#x91CC;&#x4F7F;&#x7528;&#x5230;&#x7684;&#x8D44;&#x6E90;<a href="https://pan.baidu.com/share/init?surl=kW7V3yLaxDJxCaZ2yp019g" target="_blank">https://pan.baidu.com/share/init?surl=kW7V3yLaxDJxCaZ2yp019g</a> &#x5BC6;&#x7801;&#xFF1A;y346</p>
 <p>&#x6700;&#x7EC8;&#x8868;&#x5982;&#x4E0B;</p>
 <p><img src="img/image-20220422163757239.png" alt="image-20220422163757239"></p>
 <p>&#x5176;&#x4E2D;&#xFF1A;DEPT &#x90E8;&#x95E8;&#x8868; EMP&#x5458;&#x5DE5;&#x8868; SALGRADE &#x5DE5;&#x8D44;&#x7B49;&#x7EA7;&#x8868;</p>
 <ul>
 <li>&#x5220;&#x9664;&#x8868;&#xFF08;&#x8FD9;&#x91CC;&#x4E0D;&#x5EFA;&#x8BAE;&#x6D4B;&#x8BD5;&#xFF09;</li>
 </ul>
-<pre class="language-"><code class="lang-mysql">drop database [&#x8868;&#x540D;]
+<pre class="language-"><code class="lang-mysql">DROP TABLE table_name ;
 </code></pre>
 <ul>
 <li>&#x67E5;&#x770B;&#x8868;&#x4E2D;&#x6240;&#x6709;&#x6570;&#x636E;</li>
@@ -3121,7 +3179,7 @@ on
 <h2 id="&#x53C2;&#x8003;&#x8D44;&#x6599;"><a name="&#x53C2;&#x8003;&#x8D44;&#x6599;" class="anchor-navigation-ex-anchor" href="#&#x53C2;&#x8003;&#x8D44;&#x6599;"><i class="fa fa-link" aria-hidden="true"></i></a>&#x53C2;&#x8003;&#x8D44;&#x6599;</h2>
 <p>MySQL&#x67E5;&#x770B;&#x548C;&#x4FEE;&#x6539;&#x4E8B;&#x52A1;&#x9694;&#x79BB;&#x7EA7;&#x522B;&#xFF1A;<a href="http://c.biancheng.net/view/7266.html" target="_blank">http://c.biancheng.net/view/7266.html</a></p>
 <footer class="page-footer"><span class="copyright">Copyright &#xA9; jiaojiao52002.cn 2019 all right reserved&#xFF0C;powered by Gitbook</span><span class="footer-modification">&#x8BE5;&#x6587;&#x4EF6;&#x4FEE;&#x8BA2;&#x65F6;&#x95F4;&#xFF1A;
-2022-05-30 10:18:42
+2022-06-17 14:58:15
 </span></footer>
                                 
                                 </section>
@@ -3165,7 +3223,7 @@ on
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Mysql学习","level":"3.4","depth":1,"next":{"title":"MyBatis","level":"3.5","depth":1,"path":"javaweb/MyBatis.md","ref":"javaweb/MyBatis.md","articles":[]},"previous":{"title":"maven","level":"3.3","depth":1,"path":"javaweb/maven.md","ref":"javaweb/maven.md","articles":[]},"dir":"ltr"},"config":{"plugins":["theme-comscore","prism","-highlight","copy-code-button","search-pro","-search","-lunr","expandable-chapters","splitter","-sharing","github-buttons","donate","tbfed-pagefooter","baidu-tongji","anchor-navigation-ex","livereload"],"styles":{"website":"./public-repertory/css/gitbook-configure.css"},"pluginsConfig":{"tbfed-pagefooter":{"copyright":"Copyright &copy jiaojiao52002.cn 2019","modify_label":"该文件修订时间：","modify_format":"YYYY-MM-DD HH:mm:ss"},"prism":{"css":["prismjs/themes/prism-solarizedlight.css"],"lang":{"shell":"bash"}},"livereload":{},"baidu-tongji":{"url":"https://hm.baidu.com/hm.js","token":"89a6cd4dac6db5e9826cf2e218d990c1"},"splitter":{},"search-pro":{},"donate":{"alipay":"https://github.com/jiaoery/document-library/blob/master/zhifubao.jpg?raw=true","alipayText":"支付宝打赏","button":"打赏","title":"","wechat":"https://github.com/jiaoery/document-library/blob/master/weixin.jpg?raw=true","wechatText":"微信打赏"},"fontsettings":{"theme":"white","family":"sans","size":2},"anchor-navigation-ex":{"associatedWithSummary":true,"float":{"floatIcon":"fa fa-navicon","level1Icon":"","level2Icon":"","level3Icon":"","showLevelIcon":false},"mode":"float","multipleH1":true,"pageTop":{"level1Icon":"","level2Icon":"","level3Icon":"","showLevelIcon":false},"printLog":false,"showGoTop":true,"showLevel":false},"theme-comscore":{},"github-buttons":{"buttons":[{"user":"jiaoery","repo":"document-library","type":"star","count":true,"size":"small"},{"user":"jiaoery","width":"160","type":"follow","count":true,"size":"small"}]},"copy-code-button":{},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"expandable-chapters":{}},"theme":"default","author":"吉祥 - jiaoery","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"jiaoery 的文档库","language":"zh-hans","gitbook":"*","description":"jiaoery 的文档库. 里面包含了个人撰写的所有文章"},"file":{"path":"javaweb/MySQL学习.md","mtime":"2022-05-30T02:18:42.259Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-05-27T09:53:07.586Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Mysql学习","level":"3.4","depth":1,"next":{"title":"MyBatis","level":"3.5","depth":1,"path":"javaweb/MyBatis.md","ref":"javaweb/MyBatis.md","articles":[]},"previous":{"title":"maven","level":"3.3","depth":1,"path":"javaweb/maven.md","ref":"javaweb/maven.md","articles":[]},"dir":"ltr"},"config":{"plugins":["theme-comscore","prism","-highlight","copy-code-button","search-pro","-search","-lunr","expandable-chapters","splitter","-sharing","github-buttons","donate","tbfed-pagefooter","baidu-tongji","anchor-navigation-ex","livereload"],"styles":{"website":"./public-repertory/css/gitbook-configure.css"},"pluginsConfig":{"tbfed-pagefooter":{"copyright":"Copyright &copy jiaojiao52002.cn 2019","modify_label":"该文件修订时间：","modify_format":"YYYY-MM-DD HH:mm:ss"},"prism":{"css":["prismjs/themes/prism-solarizedlight.css"],"lang":{"shell":"bash"}},"livereload":{},"baidu-tongji":{"url":"https://hm.baidu.com/hm.js","token":"89a6cd4dac6db5e9826cf2e218d990c1"},"splitter":{},"search-pro":{},"donate":{"alipay":"https://github.com/jiaoery/document-library/blob/master/zhifubao.jpg?raw=true","alipayText":"支付宝打赏","button":"打赏","title":"","wechat":"https://github.com/jiaoery/document-library/blob/master/weixin.jpg?raw=true","wechatText":"微信打赏"},"fontsettings":{"theme":"white","family":"sans","size":2},"anchor-navigation-ex":{"associatedWithSummary":true,"float":{"floatIcon":"fa fa-navicon","level1Icon":"","level2Icon":"","level3Icon":"","showLevelIcon":false},"mode":"float","multipleH1":true,"pageTop":{"level1Icon":"","level2Icon":"","level3Icon":"","showLevelIcon":false},"printLog":false,"showGoTop":true,"showLevel":false},"theme-comscore":{},"github-buttons":{"buttons":[{"user":"jiaoery","repo":"document-library","type":"star","count":true,"size":"small"},{"user":"jiaoery","width":"160","type":"follow","count":true,"size":"small"}]},"copy-code-button":{},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"expandable-chapters":{}},"theme":"default","author":"吉祥 - jiaoery","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"jiaoery 的文档库","language":"zh-hans","gitbook":"*","description":"jiaoery 的文档库. 里面包含了个人撰写的所有文章"},"file":{"path":"javaweb/MySQL学习.md","mtime":"2022-06-17T06:58:15.129Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2022-07-18T08:23:10.558Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

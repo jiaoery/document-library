@@ -24,7 +24,11 @@
 ## SpringBoot实战课（神思者）
 
 * [开发EMOS系统](javaPractice/开发EMOS系统.md)
-* [开发笔记](Springboot在线协同办公系统.md)
+* [开发笔记](javaPractice/Springboot在线协同办公系统.md)
+
+## Android开发知识库
+
+* [keytool 命令行](android/keytool命令行.md)
 
 
 

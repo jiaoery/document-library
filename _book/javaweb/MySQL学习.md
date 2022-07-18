@@ -144,15 +144,23 @@ show tables;
 
 * 查看mysql数据库的版本号
 
-```bash
+```mysql
 select verison();
 ```
 
 * 查看当前使用的是哪个数据库
 
-```bash
+```mysql
 select database();
 ```
+
+* 删除数据库
+
+```mysql
+drop database [数据库名]
+```
+
+
 
 **注意：\c用来终止一条命令的输入。**
 
@@ -203,7 +211,7 @@ select database();
 resource [sql路径名]
 ```
 
-**注意：路径中不要有中文！！！！**这里使用到的资源https://pan.baidu.com/share/init?surl=kW7V3yLaxDJxCaZ2yp019g 密码：y346
+**注意：路径中不要有中文！！！！并且路径符号必须是 / 而不是**这里使用到的资源https://pan.baidu.com/share/init?surl=kW7V3yLaxDJxCaZ2yp019g 密码：y346
 
 最终表如下
 
@@ -214,7 +222,7 @@ resource [sql路径名]
 * 删除表（这里不建议测试）
 
 ```mysql
-drop database [表名]
+DROP TABLE table_name ;
 ```
 
 * 查看表中所有数据
